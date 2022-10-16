@@ -12,6 +12,7 @@ namespace Dulce.Heladeria.Services.Mappings
         public DtoToEntityProfile()
         {
             CreateMap<ItemDto,ItemEntity>();
+            CreateMap<ClientDto,ClientEntity>();
         }
     }
 }
