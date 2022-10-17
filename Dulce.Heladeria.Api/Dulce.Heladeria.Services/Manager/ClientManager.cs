@@ -1,3 +1,8 @@
+using AutoMapper;
+using Dulce.Heladeria.Models.Entities;
+using Dulce.Heladeria.Models.UnitOfWork;
+using Dulce.Heladeria.Repositories.IRepositories;
+using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
 using System;
 using System.Collections.Generic;
