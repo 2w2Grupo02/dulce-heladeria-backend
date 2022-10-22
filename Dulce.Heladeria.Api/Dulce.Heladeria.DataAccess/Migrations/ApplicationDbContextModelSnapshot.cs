@@ -23,6 +23,10 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");

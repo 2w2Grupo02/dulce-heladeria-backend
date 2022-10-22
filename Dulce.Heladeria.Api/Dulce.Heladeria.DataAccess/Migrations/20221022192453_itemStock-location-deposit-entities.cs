@@ -15,6 +15,7 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     DeletionDate = table.Column<DateTime>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Address = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
