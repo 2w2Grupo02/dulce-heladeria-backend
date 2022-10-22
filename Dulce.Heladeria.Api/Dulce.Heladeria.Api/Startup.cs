@@ -41,9 +41,13 @@ namespace Dulce.Heladeria.Api
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IUnitOfWork, BaseUnitOfWork>();
+
             services.AddScoped<IItemRepository,ItemRepository>();
             services.AddScoped <IItemManager,ItemManager> ();
-            //preguntar a jere!
+
+            services.AddScoped<IItemStockRepository, ItemStockRepository>();
+            services.AddScoped<IItemStockManager, ItemStockManager>();
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserManager, UserManager>();
 
