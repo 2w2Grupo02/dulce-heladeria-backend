@@ -8,6 +8,6 @@ namespace Dulce.Heladeria.Services.IManager
 {
     public interface IItemStockManager
     {
-        Task<List<ItemStockDto>> GetStockItem(int itemId);
+        Task<List<ItemStockDto>> GetItemStock(int itemId);
     }
 }

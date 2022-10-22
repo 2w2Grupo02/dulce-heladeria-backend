@@ -22,9 +22,9 @@ namespace Dulce.Heladeria.Services.Manager
             _mapper = mapper;
 
         }
-        public async Task<List<ItemStockDto>> GetStockItem(int itemId)
+        public async Task<List<ItemStockDto>> GetItemStock(int itemId)
         {
-            var itemStockEntityList = await _itemStockRepository.GetAsync(x=>x.Item.Id == itemId);
+            var itemStockEntityList = await _itemStockRepository.GetItemStock(itemId);
 
             var itemStockDtoList = _mapper.Map<List<ItemStockDto>>(itemStockEntityList);
 

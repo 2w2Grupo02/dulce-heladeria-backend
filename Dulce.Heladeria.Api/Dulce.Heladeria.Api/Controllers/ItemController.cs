@@ -2,6 +2,7 @@
 using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
@@ -11,9 +12,11 @@ namespace Dulce.Heladeria.Api.Controllers
     public class ItemController : ControllerBase
     {
         private readonly IItemManager _itemManager;
-        public ItemController(IItemManager itemManager)
+        private readonly IItemStockManager _itemStockManager;
+        public ItemController(IItemManager itemManager, IItemStockManager itemStockManager)
         {
             _itemManager = itemManager;
+            _itemStockManager = itemStockManager;
         }
 
         [HttpPost]
@@ -33,6 +36,20 @@ namespace Dulce.Heladeria.Api.Controllers
             }
 
             return NoContent();
+
+        }
+        [HttpGet("{itemId}/stock")]
+        public async Task<IActionResult> GetItemStock([FromRoute] int itemId)
+        {
+            if (itemId == 0)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<ItemStockDto> result = await _itemStockManager.GetItemStock(itemId);
+
+
+            return Ok(result);
 
         }
     }
