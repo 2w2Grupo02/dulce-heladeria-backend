@@ -52,5 +52,14 @@ namespace Dulce.Heladeria.Api.Controllers
             return Ok(result);
 
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllItems()
+        {
+            List<GetItemsDto> result = await _itemManager.GetAllItems();
+
+
+            return Ok(result);
+
+        }
     }
 }
