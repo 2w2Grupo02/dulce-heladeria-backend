@@ -24,6 +24,7 @@ namespace Dulce.Heladeria.Repositories.Repositories
                 .Include(x => x.Location).ThenInclude(x=>x.Deposit)
                 .Include(x => x.Item)
                 .Include(x => x.Item).ThenInclude(x => x.ItemType)
+                .Where(x => x.ItemId == itemId)
                 .ToListAsync();
 
             return lista;
