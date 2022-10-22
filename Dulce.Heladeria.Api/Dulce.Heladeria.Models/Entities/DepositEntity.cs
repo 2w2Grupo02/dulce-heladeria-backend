@@ -9,6 +9,9 @@ namespace Dulce.Heladeria.Models.Entities
     public class DepositEntity: BaseEntity
     {
         [Required]
-        public string Address { get; set; }
+        public string Name { get; set; }
+
+        [Required]
+        public string Address { get; set; }        
     }
 }

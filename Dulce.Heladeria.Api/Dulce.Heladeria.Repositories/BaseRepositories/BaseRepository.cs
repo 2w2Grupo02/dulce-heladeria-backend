@@ -22,9 +22,10 @@ namespace Dulce.Heladeria.Repositories.BaseRepositories
             _bd=bd;
         }
 
-        public virtual IEnumerable<TEntity> GetAll() => BaseQuery.Where(x => x.DeletionDate == null).ToList();
+        public virtual List<TEntity> GetAll() => BaseQuery.Where(x => x.DeletionDate == null).ToList();
         public virtual TEntity GetById(Int32 id) => BaseQuery.Where(x => x.Id == id).FirstOrDefault();
-        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, Boolean>> predicate) => BaseQuery.Where(predicate).ToList();
+        public virtual List<TEntity> Get(Expression<Func<TEntity, Boolean>> predicate) => BaseQuery.Where(predicate).ToList();
+        public virtual async Task<List<TEntity>> GetAsync(Expression<Func<TEntity, Boolean>> predicate) => await BaseQuery.Where(predicate).ToListAsync();
         public virtual async Task InsertAsync(TEntity entity) => await DbSet.AddAsync(entity);
         public virtual async Task UpdateAsync(TEntity entityToUpdate) => await Task.Run(() => { DbSet.Update(entityToUpdate); });
         public virtual async Task DeleteAsync(TEntity entityToDelete) => await Task.Run(() => { DbSet.Remove(entityToDelete); });

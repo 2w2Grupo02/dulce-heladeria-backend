@@ -8,8 +8,9 @@ namespace Asofar.Backend.Models.Repositories
     public interface IBaseRepository<TEntity>
     {
         TEntity GetById(Int32 id);
-        IEnumerable<TEntity> GetAll();
-        IEnumerable<TEntity> Get(Expression<Func<TEntity, Boolean>> predicate);
+        List<TEntity> GetAll();
+        List<TEntity> Get(Expression<Func<TEntity, Boolean>> predicate);
+        Task<List<TEntity>> GetAsync(Expression<Func<TEntity, Boolean>> predicate);
 
     }
 }
