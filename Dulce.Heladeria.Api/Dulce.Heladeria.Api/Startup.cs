@@ -115,6 +115,8 @@ namespace Dulce.Heladeria.Api
 
             app.UseHttpsRedirection();
 
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
@@ -132,7 +134,7 @@ namespace Dulce.Heladeria.Api
                 endpoints.MapControllers();
             });
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            
         }
     }
 }
