@@ -18,7 +18,7 @@ namespace Dulce.Heladeria.Api.Controllers
 
         [HttpPost]
         public async Task<IActionResult> InsertUser([FromBody] CreateUserDto user)
-        {
+        {   
             if (user == null)
             {
                 return BadRequest(ModelState);

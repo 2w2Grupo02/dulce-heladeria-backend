@@ -38,7 +38,41 @@ namespace Dulce.Heladeria.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(x =>   {
+
+                var env = "Production";
+                string connStr;
+
+                if (env == "Development")
+                {
+                    connStr = Configuration.GetConnectionString("DefaultConnection");
+
+
+                }
+                else
+                {
+                    // Use connection string provided at runtime by Heroku.
+                    var connUrl = Environment.GetEnvironmentVariable("CLEARDB_DATABASE_URL");
+
+                    connUrl = connUrl.Replace("mysql://", string.Empty);
+                    var userPassSide = connUrl.Split("@")[0];
+                    var hostSide = connUrl.Split("@")[1];
+
+                    var connUser = userPassSide.Split(":")[0];
+                    var connPass = userPassSide.Split(":")[1];
+                    var connHost = hostSide.Split("/")[0];
+                    var connDb = hostSide.Split("/")[1].Split("?")[0];
+
+
+                    connStr = $"server={connHost};Uid={connUser};Pwd={connPass};Database={connDb}";
+
+
+
+                }
+
+                x.UseMySql(connStr);
+
+            });
 
             services.AddScoped<IUnitOfWork, BaseUnitOfWork>();
             services.AddScoped<IItemRepository,ItemRepository>();
