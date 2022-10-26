@@ -25,11 +25,11 @@ namespace Dulce.Heladeria.Services.Manager
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<List<GetDepositsDto>> GetAllDeposits()
+        public async Task<List<GetDepositDto>> GetAllDeposits()
         {
             List<DepositEntity> depositEntityList = await _depositRepository.GetAllAsync();
 
-            var depositDtoList = _mapper.Map<List<GetDepositsDto>>(depositEntityList);
+            var depositDtoList = _mapper.Map<List<GetDepositDto>>(depositEntityList);
 
             foreach (var deposit in depositDtoList)
             {
@@ -38,6 +38,16 @@ namespace Dulce.Heladeria.Services.Manager
             }
 
             return depositDtoList;
+        }
+
+        public async Task<bool> InsertDeposit(DepositDto deposit)
+        {
+            var depositEntity = _mapper.Map<DepositEntity>(deposit);
+
+            await _depositRepository.InsertAsync(depositEntity);
+            var resultsave = await _unitOfWork.SaveChangesAsync();
+
+            return resultsave >= 1 ? true : false;
         }
     }
 }

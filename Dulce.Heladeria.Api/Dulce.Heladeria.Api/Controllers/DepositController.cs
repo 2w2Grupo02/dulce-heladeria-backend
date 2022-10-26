@@ -20,9 +20,28 @@ namespace Dulce.Heladeria.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllDeposits()
         {
-            List<GetDepositsDto> result = await _depositManager.GetAllDeposits();
+            List<GetDepositDto> result = await _depositManager.GetAllDeposits();
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InsertDeposit([FromBody] DepositDto deposit)
+        {
+            if (deposit == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            bool result = await _depositManager.InsertDeposit(deposit);
+
+            if (!result)
+            {
+                ModelState.AddModelError("error prueba", "Error al insertar nuevo deposito");
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

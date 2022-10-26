@@ -33,8 +33,8 @@ namespace Dulce.Heladeria.Services.Manager
 
             await _itemRepository.InsertAsync(itemEntity);
             var resultsave = await _unitOfWork.SaveChangesAsync();
-            
-            return true;
+
+            return resultsave >= 1 ? true : false;
         }
 
         public async Task<List<GetItemsDto>> GetAllItems()
@@ -48,8 +48,6 @@ namespace Dulce.Heladeria.Services.Manager
                 var itemStockEntityList = await _itemStockRepository.GetItemStock(item.Id);
                 item.Amount = itemStockEntityList.Sum(x => x.Amount);
             }
-
-
 
             return itemDtoList;
         }
