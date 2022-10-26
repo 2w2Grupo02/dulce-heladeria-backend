@@ -8,6 +8,7 @@ namespace Dulce.Heladeria.Services.IManager
 {
     public interface IDepositManager
     {
-        Task<List<GetDepositsDto>> GetAllDeposits();
+        Task<List<GetDepositDto>> GetAllDeposits();
+        Task<bool> InsertDeposit(DepositDto deposit);
     }
 }
