@@ -9,5 +9,6 @@ namespace Dulce.Heladeria.Services.IManager
     public interface IClientManager
     {
         Task<bool> InsertClient(ClientDto client);
+        Task<List<GetClientsDto>> GetAllClients();
     }
 }

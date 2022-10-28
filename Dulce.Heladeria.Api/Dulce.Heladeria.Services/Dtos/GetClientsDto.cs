@@ -1,4 +1,4 @@
-using Dulce.Heladeria.Models.Entities;
+﻿using Dulce.Heladeria.Models.Entities;
 using Dulce.Heladeria.Models.Enums;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Dulce.Heladeria.Services.Dtos
 {
-    public class ClientDto : BaseDto
+    public class GetClientsDto : BaseDto
     {
         public string BusinessName { get; set; }
         public int IdentifierTypeId { get; set; }

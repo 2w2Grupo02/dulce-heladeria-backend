@@ -2,6 +2,7 @@ using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
@@ -33,6 +34,15 @@ namespace Dulce.Heladeria.Api.Controllers
             }
 
             return NoContent();
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllClients()
+        {
+            List<GetClientsDto> result = await _clientManager.GetAllClients();
+
+
+            return Ok(result);
 
         }
     }

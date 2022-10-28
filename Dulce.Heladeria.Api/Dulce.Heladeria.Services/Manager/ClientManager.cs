@@ -32,5 +32,21 @@ namespace Dulce.Heladeria.Services.Manager
 
             return true;
         }
+        public async Task<List<GetClientsDto>> GetAllClients()
+        {
+            List<ClientEntity> clientEntityList = await _clientRepository.GetAllClients();
+
+            var clientDtoList = _mapper.Map<List<GetClientsDto>>(clientEntityList);
+
+            //foreach (var client in clientDtoList)
+            //{
+            //    var clientStockEntityList = await _itemStockRepository.GetItemStock(item.Id);
+            //    item.Amount = itemStockEntityList.Sum(x => x.Amount);
+            //}
+
+
+
+            return clientDtoList;
+        }
     }
 }
