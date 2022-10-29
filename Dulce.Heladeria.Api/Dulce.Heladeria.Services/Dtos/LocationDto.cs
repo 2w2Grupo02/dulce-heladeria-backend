@@ -9,7 +9,7 @@ namespace Dulce.Heladeria.Services.Dtos
         public string Column { get; set; }
         public string Row { get; set; }
         public int Capacity { get; set; }
-        public int  Deposito { get; set; }
-        public int itemType { get; set; }
+        public int DepositId { get; set; }
+        public int ItemTypeId { get; set; }
     }
 }
