@@ -30,6 +30,8 @@ namespace Dulce.Heladeria.Services.Mappings
               .ForMember(dto => dto.Identifier, entity => entity.MapFrom(x => x.Identifier))
               .ForMember(dto => dto.HomeAdress, entity => entity.MapFrom(x => x.HomeAdress))
               .ForMember(dto => dto.Email, entity => entity.MapFrom(x => x.Email));
+
+            CreateMap<DepositEntity, GetDepositDto>();
         }
     }
 }

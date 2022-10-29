@@ -48,6 +48,11 @@ namespace Dulce.Heladeria.Api
             services.AddScoped<IItemStockRepository, ItemStockRepository>();
             services.AddScoped<IItemStockManager, ItemStockManager>();
 
+            services.AddScoped<IDepositRepository, DepositRepository>();
+            services.AddScoped<IDepositManager, DepositManager>();
+
+            services.AddScoped<ILocationRepository, LocationRepository>();
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserManager, UserManager>();
 

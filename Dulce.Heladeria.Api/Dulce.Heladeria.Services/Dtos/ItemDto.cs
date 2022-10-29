@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dulce.Heladeria.Services.Dtos
 {
-    public class ItemDto: BaseDto
+    public class ItemDto
     {
         public string Name { get; set; }
         public string Description { get; set; }
