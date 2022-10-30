@@ -24,6 +24,13 @@ namespace Dulce.Heladeria.Services.Mappings
             .ForMember(dto => dto.ItemType, entity => entity.MapFrom(x => x.ItemType.Description))
             .ForMember(dto => dto.MeasuringType, entity => entity.MapFrom(x => EnumHelper.GetDescription(x.MeasuringType)));
 
+            CreateMap<ClientEntity, GetClientsDto>()
+              .ForMember(dto => dto.BusinessName, entity => entity.MapFrom(x => x.BusinessName))
+              .ForMember(dto => dto.IdentifierTypeId, entity => entity.MapFrom(x => x.IdentifierTypeId))
+              .ForMember(dto => dto.Identifier, entity => entity.MapFrom(x => x.Identifier))
+              .ForMember(dto => dto.HomeAdress, entity => entity.MapFrom(x => x.HomeAdress))
+              .ForMember(dto => dto.Email, entity => entity.MapFrom(x => x.Email));
+
             CreateMap<DepositEntity, GetDepositDto>();
 
             CreateMap<LocationEntity, LocationDto>();
