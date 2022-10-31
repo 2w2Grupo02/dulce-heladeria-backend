@@ -32,6 +32,8 @@ namespace Dulce.Heladeria.Services.Mappings
               .ForMember(dto => dto.Email, entity => entity.MapFrom(x => x.Email));
 
             CreateMap<DepositEntity, GetDepositDto>();
+            CreateMap<LocationEntity, DestinationLocationDto>()
+                .ForMember(dto => dto.Name, entity => entity.MapFrom(x => x.Column + x.Row));
         }
     }
 }
