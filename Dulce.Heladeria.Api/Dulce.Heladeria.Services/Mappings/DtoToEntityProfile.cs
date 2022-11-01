@@ -15,6 +15,7 @@ namespace Dulce.Heladeria.Services.Mappings
             CreateMap<CreateUserDto, UserEntity>();
             CreateMap<ClientDto,ClientEntity>();
             CreateMap<DepositDto, DepositEntity>();
+            CreateMap<LocationDto, LocationEntity>();
         }
     }
 }
