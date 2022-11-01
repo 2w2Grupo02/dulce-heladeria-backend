@@ -16,5 +16,8 @@ namespace Dulce.Heladeria.Models.Entities
         public int ItemTypeId { get; set; }
         public ItemTypeEntity ItemType { get; set; }
         public MeasuringType MeasuringType { get; set; }
+
+        [Required]
+        public double Price { get; set; }
     }
 }

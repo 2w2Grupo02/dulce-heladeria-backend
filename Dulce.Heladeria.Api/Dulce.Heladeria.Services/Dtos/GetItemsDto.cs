@@ -10,6 +10,6 @@ namespace Dulce.Heladeria.Services.Dtos
         public string Name { get; set; }
         public string MeasuringType { get; set; }
         public string ItemType { get; set; }
-        public int Amount { get; set; }
+        public float Amount { get; set; }
     }
 }

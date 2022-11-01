@@ -22,5 +22,7 @@ namespace Dulce.Heladeria.DataAccess.Data
         public DbSet<ClientEntity> Client { get; set; }
         public DbSet<IdentifierTypeEntity> IdentifierType { get; set; }
         public DbSet<StockMovementEntity> StockMovement { get; set; }
+        public DbSet<SaleEntity> Sale { get; set; }
+        public DbSet<SaleDetailEntity> SaleDetail { get; set; }
     }
 }
