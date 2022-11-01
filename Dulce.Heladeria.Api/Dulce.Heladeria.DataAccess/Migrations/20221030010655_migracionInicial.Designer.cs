@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dulce.Heladeria.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221022192453_itemStock-location-deposit-entities")]
-    partial class itemStocklocationdepositentities
+    [Migration("20221030010655_migracionInicial")]
+    partial class migracionInicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,15 +19,43 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                 .HasAnnotation("ProductVersion", "3.1.30")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.DepositEntity", b =>
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ClientEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("BusinessName")
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("HomeAdress")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Identifier")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("IdentifierTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdentifierTypeId");
+
+                    b.ToTable("Client");
+                });
+
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.DepositEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -36,9 +64,31 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.HasKey("Id");
 
                     b.ToTable("Deposit");
+                });
+
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.IdentifierTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentifierType");
                 });
 
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ItemEntity", b =>
@@ -153,6 +203,35 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.ToTable("Location");
                 });
 
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.StockMovementEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ItemStockId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Motive")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemStockId");
+
+                    b.ToTable("StockMovement");
+                });
+
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -200,6 +279,15 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.ToTable("user");
                 });
 
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ClientEntity", b =>
+                {
+                    b.HasOne("Dulce.Heladeria.Models.Entities.IdentifierTypeEntity", "IdentifierType")
+                        .WithMany()
+                        .HasForeignKey("IdentifierTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ItemEntity", b =>
                 {
                     b.HasOne("Dulce.Heladeria.Models.Entities.ItemTypeEntity", "ItemType")
@@ -235,6 +323,15 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.HasOne("Dulce.Heladeria.Models.Entities.ItemTypeEntity", "ItemType")
                         .WithMany()
                         .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.StockMovementEntity", b =>
+                {
+                    b.HasOne("Dulce.Heladeria.Models.Entities.ItemStockEntity", "ItemStock")
+                        .WithMany()
+                        .HasForeignKey("ItemStockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

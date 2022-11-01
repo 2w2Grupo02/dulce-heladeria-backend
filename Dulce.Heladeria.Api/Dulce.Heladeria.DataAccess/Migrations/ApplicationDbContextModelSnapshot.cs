@@ -49,6 +49,28 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.ToTable("Client");
                 });
 
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.DepositEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Deposit");
+                });
+
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.IdentifierTypeEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +201,35 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.ToTable("Location");
                 });
 
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.StockMovementEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ItemStockId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Motive")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemStockId");
+
+                    b.ToTable("StockMovement");
+                });
+
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -226,6 +277,15 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.ToTable("user");
                 });
 
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ClientEntity", b =>
+                {
+                    b.HasOne("Dulce.Heladeria.Models.Entities.IdentifierTypeEntity", "IdentifierType")
+                        .WithMany()
+                        .HasForeignKey("IdentifierTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ItemEntity", b =>
                 {
                     b.HasOne("Dulce.Heladeria.Models.Entities.ItemTypeEntity", "ItemType")
@@ -261,6 +321,15 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.HasOne("Dulce.Heladeria.Models.Entities.ItemTypeEntity", "ItemType")
                         .WithMany()
                         .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.StockMovementEntity", b =>
+                {
+                    b.HasOne("Dulce.Heladeria.Models.Entities.ItemStockEntity", "ItemStock")
+                        .WithMany()
+                        .HasForeignKey("ItemStockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

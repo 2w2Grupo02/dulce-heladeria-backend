@@ -19,7 +19,7 @@ namespace Dulce.Heladeria.Repositories.Repositories
 
         public async Task<List<ItemStockEntity>> GetItemStock(int itemId)
         {
-            List<ItemStockEntity> lista = await BaseQuery
+            List<ItemStockEntity> list = await BaseQuery
                 .Include(x => x.Location)
                 .Include(x => x.Location).ThenInclude(x=>x.Deposit)
                 .Include(x => x.Item)
@@ -27,7 +27,7 @@ namespace Dulce.Heladeria.Repositories.Repositories
                 .Where(x => x.ItemId == itemId)
                 .ToListAsync();
 
-            return lista;
+            return list;
         }
     }
 }
