@@ -8,6 +8,7 @@ namespace Dulce.Heladeria.Services.Dtos
     {
         public int Amount { get; set; }
         public string Location { get; set; }
+        public int LocationId { get; set; }
         public string Item { get; set; }
         public string ItemType { get; set; }
         public int Capacity { get; set; }
