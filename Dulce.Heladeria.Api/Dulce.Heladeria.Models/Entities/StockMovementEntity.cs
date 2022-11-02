@@ -9,7 +9,7 @@ namespace Dulce.Heladeria.Models.Entities
     public class StockMovementEntity: BaseEntity
     {
         [Required]
-        public int Amount { get; set; }
+        public float Amount { get; set; }
 
         [Required]
         public string Motive { get; set; }
