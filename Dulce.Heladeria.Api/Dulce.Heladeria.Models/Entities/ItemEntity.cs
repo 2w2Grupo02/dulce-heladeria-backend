@@ -13,11 +13,13 @@ namespace Dulce.Heladeria.Models.Entities
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }
+
         public int ItemTypeId { get; set; }
         public ItemTypeEntity ItemType { get; set; }
+
         public MeasuringType MeasuringType { get; set; }
 
-        [Required]
-        public double Price { get; set; }
+        public int ProductId { get; set; }
+        public ItemEntity Product { get; set; }
     }
 }

@@ -24,5 +24,6 @@ namespace Dulce.Heladeria.DataAccess.Data
         public DbSet<StockMovementEntity> StockMovement { get; set; }
         public DbSet<SaleEntity> Sale { get; set; }
         public DbSet<SaleDetailEntity> SaleDetail { get; set; }
+        public DbSet<ProductEntity> Product { get; set; }
     }
 }
