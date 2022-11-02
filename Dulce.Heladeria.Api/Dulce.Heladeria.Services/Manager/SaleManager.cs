@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dulce.Heladeria.Models.Entities;
+using Dulce.Heladeria.Models.Enums;
 using Dulce.Heladeria.Models.UnitOfWork;
 using Dulce.Heladeria.Repositories.IRepositories;
 using Dulce.Heladeria.Services.Dtos;
@@ -18,8 +19,8 @@ namespace Dulce.Heladeria.Services.Manager
         private readonly ISaleDetailRepository _saleDetailRepository;
         private readonly IStockMovementRepository _stockMovementRepository;
         private readonly IItemStockRepository _itemStockRepository;
-        private readonly IItemRepository _itemRepository;
         private readonly IClientRepository _clientRepository;
+        private readonly IItemRepository _itemRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public SaleManager(
@@ -75,37 +76,56 @@ namespace Dulce.Heladeria.Services.Manager
 
                         //descontar stock
 
-                        var itemStockResult = await _itemStockRepository.GetAsync(x => x.Item.Id == saleDetail.ItemId);
-                        var itemStockEntity = itemStockResult.FirstOrDefault();
+                        //var productItemsResult = await _productItemRepository.GetAsync(x => x.Id == saleDetail.ProductId);
 
-                        if (itemStockEntity == null)
+                        foreach (var item in saleDetail.ProductDetail)
                         {
-                            throw new InvalidOperationException($"No hay stock del articulo {saleDetail.ItemName}");
+                            var itemStockResult = await _itemStockRepository.GetAsync(x => x.Item.Id == item.Id);
+                            var itemStockEntity = itemStockResult.FirstOrDefault(x => x.Amount > 0);
+
+                            if (itemStockEntity == null)
+                            {
+                                throw new InvalidOperationException($"No hay stock del articulo {item.Name}");
+                            }
+
+                            if (itemStockEntity.Amount < saleDetail.Amount)
+                            {
+                                throw new InvalidOperationException("La cantidad a descontar excede la disponible. Cant. existente: " + itemStockEntity.Amount);
+                            }
+
+                            var itemResult = await _itemRepository.GetAsync(x => x.Id == item.Id);
+                            var itemEntity = itemResult.FirstOrDefault();
+
+                            if (itemStockEntity == null)
+                            {
+                                throw new InvalidOperationException($"No existe el articulo {item.Name}");
+                            }
+
+                            //valido si el articulo se mide en lt 
+                            float amount = saleDetail.Amount;
+                            if (itemEntity.MeasuringType == MeasuringType.liter)
+                            {
+                                amount = amount / saleDetail.ProductDetail.Count();
+                                itemStockEntity.Amount -= amount;
+                                await _itemStockRepository.UpdateAsync(itemStockEntity);
+                            }
+                            else
+                            {
+                                itemStockEntity.Amount -= amount;
+                                await _itemStockRepository.UpdateAsync(itemStockEntity);                               
+                            }
+
+                            //registrar movimiento
+
+                            var newOriginMovement = new StockMovementEntity()
+                            {
+                                Amount = - amount,
+                                ItemStockId = itemStockEntity.Id,
+                                Motive = "Venta",
+                                MovementDate = DateTime.Now
+                            };
+                            await _stockMovementRepository.InsertAsync(newOriginMovement);
                         }
-
-                        if (itemStockEntity.Amount < saleDetail.Amount)
-                        {
-                            throw new InvalidOperationException("La cantidad a descontar excede la disponible. Cant. existente: " + itemStockEntity.Amount);
-                        }
-
-                        //var itemResult = await _itemRepository.GetAsync(x => x.Id == sale.ItemId);
-                        //var itemEntity = itemResult.FirstOrDefault();
-
-                        //ver la forma de descontar el articulo
-
-                        itemStockEntity.Amount -= saleDetail.Amount;
-                        await _itemStockRepository.UpdateAsync(itemStockEntity);
-
-                        //registrar movimiento
-
-                        var newOriginMovement = new StockMovementEntity()
-                        {
-                            Amount = -saleDetail.Amount,
-                            ItemStockId = itemStockEntity.Id,
-                            Motive = "Venta",
-                            MovementDate = DateTime.Now
-                        };
-                        await _stockMovementRepository.InsertAsync(newOriginMovement);
                     }
 
                     var resultsave = await _unitOfWork.SaveChangesAsync();

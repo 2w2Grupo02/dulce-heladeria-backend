@@ -67,6 +67,8 @@ namespace Dulce.Heladeria.Api
 
             services.AddScoped<ISaleDetailRepository, SaleDetailRepository>();
 
+            services.AddScoped<IProductItemRepository, ProductItemRepository>();
+
             services.AddAutoMapper(typeof(EntityToDtoProfile));
             services.AddAutoMapper(typeof(DtoToEntityProfile));
 
