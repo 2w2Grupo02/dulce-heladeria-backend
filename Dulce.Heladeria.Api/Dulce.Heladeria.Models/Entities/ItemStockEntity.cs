@@ -9,7 +9,7 @@ namespace Dulce.Heladeria.Models.Entities
     public class ItemStockEntity: BaseEntity
     {
         [Required]
-        public int Amount { get; set; }
+        public float Amount { get; set; }
 
         public int ItemId { get; set; }
         public ItemEntity Item { get; set; }

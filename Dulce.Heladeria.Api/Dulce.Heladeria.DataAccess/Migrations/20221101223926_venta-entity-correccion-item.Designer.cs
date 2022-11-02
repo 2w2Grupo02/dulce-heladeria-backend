@@ -3,14 +3,16 @@ using System;
 using Dulce.Heladeria.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Dulce.Heladeria.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221101223926_venta-entity-correccion-item")]
+    partial class ventaentitycorreccionitem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,6 +113,9 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ItemTypeId");
@@ -201,51 +206,6 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.ToTable("Location");
                 });
 
-            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ProductEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<double>("ListPrice")
-                        .HasColumnType("double");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ProductItemEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductItem");
-                });
-
             modelBuilder.Entity("Dulce.Heladeria.Models.Entities.SaleDetailEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -258,7 +218,7 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<int>("SaleId")
@@ -269,7 +229,7 @@ namespace Dulce.Heladeria.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("SaleId");
 
@@ -307,8 +267,8 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<float>("Amount")
-                        .HasColumnType("float");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime(6)");
@@ -425,26 +385,11 @@ namespace Dulce.Heladeria.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.ProductItemEntity", b =>
+            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.SaleDetailEntity", b =>
                 {
                     b.HasOne("Dulce.Heladeria.Models.Entities.ItemEntity", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dulce.Heladeria.Models.Entities.ProductEntity", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Dulce.Heladeria.Models.Entities.SaleDetailEntity", b =>
-                {
-                    b.HasOne("Dulce.Heladeria.Models.Entities.ItemEntity", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

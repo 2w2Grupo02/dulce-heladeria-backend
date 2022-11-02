@@ -6,17 +6,18 @@ using System.Text;
 
 namespace Dulce.Heladeria.Models.Entities
 {
-    public class StockMovementEntity: BaseEntity
+    public class SaleDetailEntity : BaseEntity
     {
         [Required]
         public float Amount { get; set; }
 
         [Required]
-        public string Motive { get; set; }
+        public double SalePrice { get; set; }
+        
+        public int ProductId { get; set; }
+        public ItemEntity Product { get; set; }
 
-        public DateTime MovementDate { get; set; }
-
-        public int ItemStockId { get; set; }
-        public ItemStockEntity ItemStock { get; set; }
+        public int SaleId { get; set; }
+        public SaleEntity Sale { get; set; }
     }
 }

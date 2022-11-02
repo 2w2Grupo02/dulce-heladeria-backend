@@ -145,6 +145,12 @@ namespace Dulce.Heladeria.Services.Manager
                     await _stockMovementRepository.InsertAsync(newDestinationMovement);
 
                     var resultsave = await _unitOfWork.SaveChangesAsync();
+
+                    if (resultsave < 1)
+                    {
+                        throw new InvalidOperationException("Error al insertar un nuevo movimiento");
+                    }
+
                     transaction.Commit();
                     return true;
                 }
