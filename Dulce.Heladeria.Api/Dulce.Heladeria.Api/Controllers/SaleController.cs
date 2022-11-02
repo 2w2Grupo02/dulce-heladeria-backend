@@ -1,8 +1,10 @@
 ﻿using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
+using Dulce.Heladeria.Services.Manager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
@@ -16,6 +18,16 @@ namespace Dulce.Heladeria.Api.Controllers
         {
             _saleManager = saleManager;
         }
+
+        [HttpPost("/range")]
+        public async Task<IActionResult> GetAllSalesAmountPerDay([FromBody] RangeDto rangeDto)
+        {
+            List<SalePerDayDto> result = await _saleManager
+                .getAllSales(rangeDto.start, rangeDto.end);
+            return Ok(result);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> InsertNewSale([FromBody] SaleDto saleDto)
         {

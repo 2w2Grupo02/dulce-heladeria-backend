@@ -5,7 +5,9 @@ using Dulce.Heladeria.Models.UnitOfWork;
 using Dulce.Heladeria.Repositories.IRepositories;
 using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
+using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Services.Manager
 {
-    public class SaleManager: ISaleManager
+    public class SaleManager : ISaleManager
     {
         private readonly ISaleRepository _saleRepository;
         private readonly ISaleDetailRepository _saleDetailRepository;
@@ -24,13 +26,13 @@ namespace Dulce.Heladeria.Services.Manager
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public SaleManager(
-            ISaleRepository saleRepository, 
-            ISaleDetailRepository saleDetailRepository, 
+            ISaleRepository saleRepository,
+            ISaleDetailRepository saleDetailRepository,
             IStockMovementRepository stockMovementRepository,
             IItemStockRepository itemStockRepository,
             IClientRepository clientRepository,
             IItemRepository itemRepository,
-            IUnitOfWork unitOfWork, 
+            IUnitOfWork unitOfWork,
             IMapper mapper)
         {
             _saleRepository = saleRepository;
@@ -41,6 +43,26 @@ namespace Dulce.Heladeria.Services.Manager
             _itemRepository = itemRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        public async Task<List<SalePerDayDto>> getAllSales(DateTime start, DateTime end)
+        {
+            var sales = await _saleRepository.GetAllAsync();
+            var salesFiltered = sales
+                .Where(sale => sale.Date <= end && sale.Date >= start);
+            List<SalePerDayDto> ventasDto = new List<SalePerDayDto>();
+
+            foreach (var sale in salesFiltered) { 
+                var detalles = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
+                float total = 0; 
+                foreach (var detalle in detalles)
+                {
+                    total += detalle.Amount; 
+                }
+                ventasDto.Add(new SalePerDayDto(sale.Date, total));
+            }
+
+            return ventasDto; 
         }
 
         public async Task<bool> InsertNewSale(SaleDto saleDto)
