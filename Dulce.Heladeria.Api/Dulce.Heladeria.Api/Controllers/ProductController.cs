@@ -18,7 +18,7 @@ namespace Dulce.Heladeria.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllItems()
+        public async Task<IActionResult> GetAllProductsWithItems()
         {
             List<ProductDto> result = await _productManager.GetAllProductsWithItems();
 

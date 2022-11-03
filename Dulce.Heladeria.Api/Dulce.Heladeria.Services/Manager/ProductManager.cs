@@ -48,10 +48,13 @@ namespace Dulce.Heladeria.Services.Manager
                     }
                 }
 
+                var productEntity = product.First().Product;
                 var productDto = new ProductDto()
                 {
                     Id = product.Key,
-                    Name = product.First().Product.Name,
+                    Name = productEntity.Name,
+                    Price = productEntity.ListPrice,
+                    MaxItemAmount = productEntity.MaxItemAmount,
                     Items = items
                 };
 
