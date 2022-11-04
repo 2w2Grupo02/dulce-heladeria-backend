@@ -6,6 +6,7 @@ using Dulce.Heladeria.Repositories.Repositories;
 using Dulce.Heladeria.Services.IManager;
 using Dulce.Heladeria.Services.Manager;
 using Dulce.Heladeria.Services.Mappings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -17,11 +18,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api
@@ -72,8 +75,20 @@ namespace Dulce.Heladeria.Api
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductManager, ProductManager>();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
             services.AddAutoMapper(typeof(EntityToDtoProfile));
-            services.AddAutoMapper(typeof(DtoToEntityProfile));
+            services.AddAutoMapper(typeof(DtoToEntityProfile));            
 
             services.AddSwaggerGen(options => 
             {

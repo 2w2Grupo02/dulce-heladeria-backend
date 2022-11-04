@@ -23,20 +23,16 @@ namespace Dulce.Heladeria.Models.Entities
         [DataType(DataType.Text)]
         public string Dni { get; set; }
 
-        [Required(ErrorMessage = "user name is required")]
-        [StringLength(100, MinimumLength = 3, ErrorMessage = "User Name should be minimum 3 characters and a maximum of 100 characters")]
-        [DataType(DataType.Text)]
-        public string UserName { get; set; }
-
         [Required(ErrorMessage = "email is required")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Last Name should be minimum 3 characters and a maximum of 100 characters")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "password is required")]
-        [StringLength(100, MinimumLength = 8, ErrorMessage = "password should be minimum 8 characters and a maximum of 100 characters")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+        [Required(ErrorMessage = "passwordhash is required")]
+        public byte[] PasswordHash { get; set; }
+
+        [Required(ErrorMessage = "passwordsalt is required")]
+        public byte[] PasswordSalt { get; set; }
 
         [Required(ErrorMessage = "Rol is required")]
         public int Rol { get; set; }

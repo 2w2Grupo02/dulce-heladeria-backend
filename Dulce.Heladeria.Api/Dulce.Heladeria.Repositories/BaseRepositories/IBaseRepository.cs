@@ -12,6 +12,7 @@ namespace Asofar.Backend.Models.Repositories
         Task<List<TEntity>> GetAllActivesAsync();
         List<TEntity> Get(Expression<Func<TEntity, Boolean>> predicate);
         Task<List<TEntity>> GetAsync(Expression<Func<TEntity, Boolean>> predicate);
+        Task<TEntity> GetBy(Expression<Func<TEntity, Boolean>> predicate);
 
     }
 }
