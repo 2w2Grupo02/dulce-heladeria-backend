@@ -5,6 +5,9 @@ using System.Text;
 using Dulce.Heladeria.Models.Entities;
 using Dulce.Heladeria.Repositories.IRepositories;
 using Dulce.Heladeria.DataAccess.Data;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dulce.Heladeria.Repositories.Repositories
 {
@@ -12,6 +15,12 @@ namespace Dulce.Heladeria.Repositories.Repositories
     {
         public UserRepository(ApplicationDbContext bd) : base(bd)
         {
+        }
+        public async Task<bool> ExistsUser(string user)
+        {
+           var result = await BaseQuery.Where(x => x.Email == user).FirstOrDefaultAsync();
+
+            return result != null ? true : false;
         }
     }
 }

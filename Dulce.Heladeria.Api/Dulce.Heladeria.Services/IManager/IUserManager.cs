@@ -1,4 +1,5 @@
-﻿using Dulce.Heladeria.Services.Dtos;
+﻿using Dulce.Heladeria.Models.Entities;
+using Dulce.Heladeria.Services.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Dulce.Heladeria.Services.IManager
 {
     public interface IUserManager
     {
-        Task<bool> InsertUser(CreateUserDto user);
+        Task<bool> Register(CreateUserDto user);
+        Task<UserDto> Login(string usuario, string password);
     }
 }

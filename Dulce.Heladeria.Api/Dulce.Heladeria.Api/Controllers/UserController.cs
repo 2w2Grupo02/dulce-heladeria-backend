@@ -3,6 +3,13 @@ using Microsoft.AspNetCore.Http;
 using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System.Text;
+using System;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
@@ -11,20 +18,22 @@ namespace Dulce.Heladeria.Api.Controllers
     public class UserController : Controller
     {
         private readonly IUserManager _userManager;
-        public UserController(IUserManager userManager)
+        private readonly IConfiguration _config;
+        public UserController(IUserManager userManager, IConfiguration config)
         {
             _userManager = userManager;
+            _config = config;
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertUser([FromBody] CreateUserDto user)
+        public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto user)
         {
             if (user == null)
             {
                 return BadRequest(ModelState);
             }
 
-            var result = await _userManager.InsertUser(user);
+            var result = await _userManager.Register(user);
 
             if (!result)
             {
@@ -33,6 +42,42 @@ namespace Dulce.Heladeria.Api.Controllers
             }
 
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginUser(UserLoginDto usuarioAuthLoginDto)
+        {
+            var userDto = await _userManager.Login(usuarioAuthLoginDto.User, usuarioAuthLoginDto.Password);
+            if (userDto is null)
+            {
+                return Unauthorized();
+            }
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier,userDto.Id.ToString()),
+                new Claim(ClaimTypes.Name,userDto.Email.ToString()),
+                new Claim(ClaimTypes.Role, userDto.Role.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
+            var credenciales = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddMinutes(60),
+                SigningCredentials = credenciales
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return Ok(new
+            {
+                accessToken = tokenHandler.WriteToken(token)
+            });
+
         }
     }
 }
