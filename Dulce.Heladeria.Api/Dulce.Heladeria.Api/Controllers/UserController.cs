@@ -84,6 +84,8 @@ namespace Dulce.Heladeria.Api.Controllers
 
             return Ok(new
             {
+                userId = userDto.Id,
+                role = userDto.Role,
                 accessToken = tokenHandler.WriteToken(token)
             });
 
