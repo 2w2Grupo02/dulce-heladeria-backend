@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : Controller
@@ -25,6 +26,7 @@ namespace Dulce.Heladeria.Api.Controllers
             _config = config;
         }
 
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto user)
         {
