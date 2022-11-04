@@ -49,8 +49,7 @@ namespace Dulce.Heladeria.Services.Manager
 
         public async Task<UserDto> Login(string userEmail, string password)
         {
-            var userEntity = await _userRepository.GetAsync(x => x.Equals(userEmail));
-            var user = userEntity.FirstOrDefault();
+            var user = await _userRepository.GetBy(x => x.Email.Equals(userEmail));
 
             if (user is null)
             {

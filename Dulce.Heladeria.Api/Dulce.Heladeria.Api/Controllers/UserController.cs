@@ -25,7 +25,7 @@ namespace Dulce.Heladeria.Api.Controllers
             _config = config;
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto user)
         {
             if (user == null)
@@ -33,15 +33,22 @@ namespace Dulce.Heladeria.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _userManager.Register(user);
-
-            if (!result)
+            try
             {
-                ModelState.AddModelError("error", "Error al insertar nuevo usuario");
-                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
-            }
+                var result = await _userManager.Register(user);
 
-            return Ok(result);
+                if (!result)
+                {
+                    ModelState.AddModelError("error", "Error al insertar nuevo usuario");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            return NoContent();
         }
 
         [AllowAnonymous]
@@ -51,7 +58,7 @@ namespace Dulce.Heladeria.Api.Controllers
             var userDto = await _userManager.Login(usuarioAuthLoginDto.User, usuarioAuthLoginDto.Password);
             if (userDto is null)
             {
-                return Unauthorized();
+                return Unauthorized("Contraseña o usuario incorrecto");
             }
 
             var claims = new[]
@@ -66,7 +73,7 @@ namespace Dulce.Heladeria.Api.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(60),
+                Expires = DateTime.UtcNow.AddMinutes(60),
                 SigningCredentials = credenciales
             };
 
