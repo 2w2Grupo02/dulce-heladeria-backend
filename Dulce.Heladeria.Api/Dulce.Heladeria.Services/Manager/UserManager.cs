@@ -10,6 +10,7 @@ using Dulce.Heladeria.Models.Entities;
 using Dulce.Heladeria.Models.UnitOfWork;
 using Dulce.Heladeria.Repositories.Repositories;
 using System.Linq;
+using Dulce.Heladeria.Models.Enums;
 
 namespace Dulce.Heladeria.Services.Manager
 {
@@ -61,7 +62,7 @@ namespace Dulce.Heladeria.Services.Manager
                 return null;
             }
 
-            return new UserDto() { Id = user.Id, Email = user.Email };
+            return new UserDto() { Id = user.Id, Email = user.Email, Role = (Roles) user.Rol };
         }
         private bool PasswordHashValidation(string password, byte[] passwordHash, byte[] passwordSalt)
         {
