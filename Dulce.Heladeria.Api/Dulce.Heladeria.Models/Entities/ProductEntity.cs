@@ -16,5 +16,8 @@ namespace Dulce.Heladeria.Models.Entities
         
         [Required]
         public int MaxItemAmount { get; set; }
+
+        [Required]
+        public string ImageUrl { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace Dulce.Heladeria.Services.Dtos
         public string Name { get; set; }
         public double Price { get; set; }
         public int MaxItemAmount { get; set; }
+        public string ImageUrl { get; set; }
         public List<ProductItemDto> Items { get; set; }
     }
 }

@@ -36,6 +36,8 @@ namespace Dulce.Heladeria.Services.Mappings
                 .ForMember(dto => dto.Name, entity => entity.MapFrom(x => x.Column + x.Row));
 
             CreateMap<LocationEntity, LocationDto>();
+            CreateMap<ProductEntity, ProductDto>()
+                .ForMember(dto => dto.Price, entity => entity.MapFrom(x => x.ListPrice));
         }
     }
 }
