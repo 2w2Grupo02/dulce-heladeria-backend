@@ -28,6 +28,15 @@ namespace Dulce.Heladeria.Api.Controllers
         }
 
 
+        [HttpGet("/range")]
+        public async Task<IActionResult> GetAllSalesAmountPerDay2([FromQuery] DateTime start, [FromQuery] DateTime end)
+        {
+            List<SalePerDayDto> result = await _saleManager
+                .getAllSales(start, end);
+            return Ok(result);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> InsertNewSale([FromBody] SaleDto saleDto)
         {
