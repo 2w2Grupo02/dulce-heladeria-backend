@@ -20,10 +20,18 @@ namespace Dulce.Heladeria.Api.Controllers
             _productManager = productManager;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllProductsWithItems()
+        [HttpGet("available")]
+        public async Task<IActionResult> GetProductsWithAvailableItems()
         {
-            List<ProductDto> result = await _productManager.GetAllProductsWithItems();
+            List<ProductDto> result = await _productManager.GetProductsWithAvailableItems();
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductsWithItems()
+        {
+            List<ProductDto> result = await _productManager.GetProductsWithItems();
 
             return Ok(result);
         }

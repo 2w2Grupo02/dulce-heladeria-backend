@@ -8,7 +8,8 @@ namespace Dulce.Heladeria.Services.IManager
 {
     public interface IProductManager
     {
-        Task<List<ProductDto>> GetAllProductsWithItems();
+        Task<List<ProductDto>> GetProductsWithAvailableItems();
+        Task<List<ProductDto>> GetProductsWithItems();
         Task<bool> InsertProduct(CreateProductDto productDto);
     }
 }
