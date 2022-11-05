@@ -17,20 +17,23 @@ namespace Dulce.Heladeria.Services.Manager
         private readonly IProductItemRepository _productItemRepository;
         private readonly IProductRepository _productRepository;
         private readonly IItemStockRepository _itemStockRepository;
+        private readonly IItemRepository _itemRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public ProductManager(
             IProductItemRepository productItemRepository, 
-            IItemStockRepository itemStockRepository, 
+            IItemStockRepository itemStockRepository,
             IProductRepository productRepository,
-            IUnitOfWork unitOfWork, 
-            IMapper mapper)
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IItemRepository itemRepository)
         {
             _productItemRepository = productItemRepository;
             _itemStockRepository = itemStockRepository;
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _itemRepository = itemRepository;
         }
 
         public async Task<List<ProductDto>> GetAllProductsWithItems()
@@ -83,6 +86,11 @@ namespace Dulce.Heladeria.Services.Manager
 
                     foreach (var productItem in productDto.Items)
                     {
+                        if (await _itemRepository.GetBy(x => x.Id == productItem.Id) == null)
+                        {
+                            throw new InvalidOperationException($"No existe el articulo {productItem.Name}");
+                        }
+
                         var productItemEntity = _mapper.Map<ProductItemEntity>(productItem);
                         productItemEntity.ProductId = productEntity.Id;
                         await _productItemRepository.InsertAsync(productItemEntity);
