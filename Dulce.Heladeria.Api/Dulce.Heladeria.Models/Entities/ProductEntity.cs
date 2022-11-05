@@ -13,5 +13,8 @@ namespace Dulce.Heladeria.Models.Entities
 
         [Required]
         public double ListPrice { get; set; }
+        
+        [Required]
+        public int MaxItemAmount { get; set; }
     }
 }

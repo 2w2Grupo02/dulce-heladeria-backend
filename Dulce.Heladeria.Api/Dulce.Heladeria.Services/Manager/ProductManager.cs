@@ -15,15 +15,25 @@ namespace Dulce.Heladeria.Services.Manager
     public class ProductManager: IProductManager
     {
         private readonly IProductItemRepository _productItemRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IItemStockRepository _itemStockRepository;
+        private readonly IItemRepository _itemRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ProductManager(IProductItemRepository productItemRepository, IItemStockRepository itemStockRepository,IUnitOfWork unitOfWork, IMapper mapper)
+        public ProductManager(
+            IProductItemRepository productItemRepository, 
+            IItemStockRepository itemStockRepository,
+            IProductRepository productRepository,
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IItemRepository itemRepository)
         {
             _productItemRepository = productItemRepository;
             _itemStockRepository = itemStockRepository;
+            _productRepository = productRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _itemRepository = itemRepository;
         }
 
         public async Task<List<ProductDto>> GetAllProductsWithItems()
@@ -48,10 +58,13 @@ namespace Dulce.Heladeria.Services.Manager
                     }
                 }
 
+                var productEntity = product.First().Product;
                 var productDto = new ProductDto()
                 {
                     Id = product.Key,
-                    Name = product.First().Product.Name,
+                    Name = productEntity.Name,
+                    Price = productEntity.ListPrice,
+                    MaxItemAmount = productEntity.MaxItemAmount,
                     Items = items
                 };
 
@@ -59,6 +72,55 @@ namespace Dulce.Heladeria.Services.Manager
             }
 
             return productsDtoList;
+        }
+
+        public async Task<bool> InsertProduct(CreateProductDto productDto)
+        {
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                try
+                {
+                    var productEntity = _mapper.Map<ProductEntity>(productDto);
+
+                    var productId = await _productRepository.SaveAsync(productEntity);
+
+                    foreach (var productItem in productDto.Items)
+                    {
+                        if (await _itemRepository.GetBy(x => x.Id == productItem.Id) == null)
+                        {
+                            throw new InvalidOperationException($"No existe el articulo {productItem.Name}");
+                        }
+
+                        var productItemEntity = _mapper.Map<ProductItemEntity>(productItem);
+                        productItemEntity.ProductId = productEntity.Id;
+                        await _productItemRepository.InsertAsync(productItemEntity);
+                    }
+
+                    var resultsave = await _unitOfWork.SaveChangesAsync();
+
+                    if (resultsave >= 1)
+                    {
+                        transaction.Commit();
+                        return true;
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+            }
+               
         }
     }
 }

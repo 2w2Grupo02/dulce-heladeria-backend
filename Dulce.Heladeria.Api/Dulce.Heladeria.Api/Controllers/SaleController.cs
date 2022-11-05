@@ -1,5 +1,6 @@
 ﻿using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
+using Microsoft.AspNetCore.Authorization;
 using Dulce.Heladeria.Services.Manager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SaleController : ControllerBase

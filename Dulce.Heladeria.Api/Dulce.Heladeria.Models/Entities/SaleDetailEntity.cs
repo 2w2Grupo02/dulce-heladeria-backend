@@ -15,7 +15,7 @@ namespace Dulce.Heladeria.Models.Entities
         public double SalePrice { get; set; }
         
         public int ProductId { get; set; }
-        public ItemEntity Product { get; set; }
+        public ProductEntity Product { get; set; }
 
         public int SaleId { get; set; }
         public SaleEntity Sale { get; set; }

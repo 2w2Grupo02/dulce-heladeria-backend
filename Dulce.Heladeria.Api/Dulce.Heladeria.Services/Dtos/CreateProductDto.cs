@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Dulce.Heladeria.Services.Dtos
 {
-    public class ProductDto
+    public class CreateProductDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public int MaxItemAmount { get; set; }
