@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SaleController : ControllerBase
@@ -35,6 +35,13 @@ namespace Dulce.Heladeria.Api.Controllers
         {
             List<SalePerDayDto> result = await _saleManager
                 .getAllSales(start, end);
+            return Ok(result);
+        }
+
+        [HttpGet("/day")]
+        public async Task<IActionResult> GetAllWithPaymentMethod([FromQuery] DateTime start)
+        {
+            var result = await _saleManager.getAllSalesByMethod(start); 
             return Ok(result);
         }
 
