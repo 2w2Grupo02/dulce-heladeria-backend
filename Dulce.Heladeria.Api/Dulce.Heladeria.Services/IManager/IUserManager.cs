@@ -11,5 +11,6 @@ namespace Dulce.Heladeria.Services.IManager
     {
         Task<bool> Register(CreateUserDto user);
         Task<UserDto> Login(string usuario, string password);
+        Task<List<UserGetDto>> GetAllUsers();
     }
 }

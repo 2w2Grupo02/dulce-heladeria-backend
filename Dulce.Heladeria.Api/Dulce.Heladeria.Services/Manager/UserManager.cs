@@ -84,5 +84,13 @@ namespace Dulce.Heladeria.Services.Manager
                 passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
+
+        public async Task<List<UserGetDto>> GetAllUsers()
+        {
+            var userEntities = await _userRepository.GetAllAsync();
+            var usersDto = _mapper.Map<List<UserGetDto>>(userEntities);
+
+            return usersDto;
+        }
     }
 }
