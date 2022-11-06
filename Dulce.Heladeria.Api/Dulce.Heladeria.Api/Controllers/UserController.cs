@@ -10,6 +10,7 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
@@ -89,6 +90,13 @@ namespace Dulce.Heladeria.Api.Controllers
                 accessToken = tokenHandler.WriteToken(token)
             });
 
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            List<UserGetDto> result = await _userManager.GetAllUsers();
+
+            return Ok(result);
         }
     }
 }
