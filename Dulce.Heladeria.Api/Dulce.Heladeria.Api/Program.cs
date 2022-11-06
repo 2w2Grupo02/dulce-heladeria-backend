@@ -1,3 +1,4 @@
+using Dulce.Heladeria.Services.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -22,5 +23,13 @@ namespace Dulce.Heladeria.Api
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        public static bool Login(UserLoginDto usuario)
+        {
+            if (usuario.User.Equals("admin@gmail.com") && usuario.Password.Equals("admin1234"))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
