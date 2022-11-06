@@ -6,6 +6,7 @@ using Dulce.Heladeria.Repositories.IRepositories;
 using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,6 +49,7 @@ namespace Dulce.Heladeria.Services.Manager
         public async Task<List<SalePerDayDto>> getAllSales(DateTime start, DateTime end)
         {
             var sales = await _saleRepository.GetAllAsync();
+            
             var salesFiltered = sales
                 .Where(sale => sale.Date <= end && sale.Date >= start);
             List<SalePerDayDto> ventasDto = new List<SalePerDayDto>();
@@ -63,6 +65,65 @@ namespace Dulce.Heladeria.Services.Manager
             }
 
             return ventasDto; 
+        }
+
+        public async Task<List<SalesWithMethod>> getAllSalesByMethod(DateTime start)
+        {
+            //var sales = await _saleRepository.GetAllAsync();
+            //var daySales = sales.Where(sales => sales.Date == start);
+            //List<SalesWithMethod> ventas = new List<SalesWithMethod>();
+
+            var sales = await _saleRepository.getAllSalesByDay(start);
+
+            List<SaleWithPayment> salesWithPayment = new List<SaleWithPayment>();
+
+            foreach (var sale in sales)
+            {
+                var detalles = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
+                double total = 0;
+                foreach (var detalle in detalles)
+                {
+                    total += (detalle.Amount * detalle.SalePrice);
+                }
+                salesWithPayment.Add(new SaleWithPayment(sale.PaymentMethod, total));
+            }
+
+            List<SaleWithPayment> saleCash = salesWithPayment.Where(x => x.PaymentMethod == PaymentMethod.Cash).ToList();
+            List<SaleWithPayment> saleCard = salesWithPayment.Where(x => x.PaymentMethod == PaymentMethod.Card).ToList();
+            List<SaleWithPayment> saleMp = salesWithPayment.Where(x => x.PaymentMethod == PaymentMethod.MercadoPago).ToList();
+
+            List<SalesWithMethod> salesByMethod = new List<SalesWithMethod>();
+
+            SalesWithMethod cash = new SalesWithMethod(PaymentMethod.Cash,0,0);
+            SalesWithMethod card = new SalesWithMethod(PaymentMethod.Card,0,0);
+            SalesWithMethod mp = new SalesWithMethod(PaymentMethod.MercadoPago, 0, 0);
+
+            
+
+            foreach (var sale in saleCash) {
+                cash.cant = cash.cant += 1;
+                cash.total = cash.total += sale.Total; 
+            }
+
+            foreach (var sale in saleCard)
+            {
+                card.cant = card.cant += 1;
+                card.total = card.total += sale.Total;
+            }
+
+            foreach (var sale in saleMp)
+            {
+                mp.cant = mp.cant++;
+                mp.total = mp.total += sale.Total;
+            }
+
+            List<SalesWithMethod> salesWithMethods = new List<SalesWithMethod>();
+            salesWithMethods.Add(cash);
+            salesWithMethods.Add(card);
+            salesWithMethods.Add(mp);
+
+
+            return salesWithMethods; 
         }
 
         public async Task<bool> InsertNewSale(SaleDto saleDto)

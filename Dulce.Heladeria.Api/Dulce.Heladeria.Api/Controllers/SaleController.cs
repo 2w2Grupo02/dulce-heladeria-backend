@@ -40,6 +40,13 @@ namespace Dulce.Heladeria.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("/day")]
+        public async Task<IActionResult> GetAllWithPaymentMethod([FromQuery] DateTime start)
+        {
+            var result = await _saleManager.getAllSalesByMethod(start); 
+            return Ok(result);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> InsertNewSale([FromBody] SaleDto saleDto)

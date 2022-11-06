@@ -19,11 +19,15 @@ namespace Dulce.Heladeria.Services.Manager
         private readonly IItemStockRepository _itemStockRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ISaleRepository _saleRepository;
+        private readonly ISaleDetailRepository _saleDetailRepository;
         private readonly IMapper _mapper;
         public ProductManager(
             IProductItemRepository productItemRepository, 
             IItemStockRepository itemStockRepository,
             IProductRepository productRepository,
+            ISaleRepository saleRepository,
+            ISaleDetailRepository saleDetailRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             IItemRepository itemRepository)
@@ -34,6 +38,8 @@ namespace Dulce.Heladeria.Services.Manager
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _itemRepository = itemRepository;
+            _saleRepository = saleRepository;
+            _saleDetailRepository = saleDetailRepository;
         }
 
         public async Task<List<ProductDto>> GetProductsWithAvailableItems()
@@ -76,6 +82,30 @@ namespace Dulce.Heladeria.Services.Manager
             }
 
             return productsDtoList;
+        }
+
+        public async Task<List<RankingProduct>> GetMostSaleProductsByRange(DateTime start, DateTime end)
+        {
+           //Obtengo todas la ventas
+           var sales = await _saleRepository.GetAllAsync();
+
+            //filtro por fechas
+            var salesFiltered = sales
+                .Where(sale => sale.Date <= end && sale.Date >= start);
+
+            //hago una lista de detalles
+            var salesDetails = new List<SaleDetailEntity>();
+
+            //itero en todas las ventas para traer sus detalles y lo almaceno el la lista de detalles
+            foreach (var sale in salesFiltered) {
+                var details = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
+                foreach (var d in details) {
+                    salesDetails.Add(d); 
+                }
+            }
+
+            var salesDetailsGroupByProduct = salesDetails.GroupBy(x => x.ProductId);
+            return null;
         }
 
         public async Task<bool> InsertProduct(CreateProductDto productDto)
