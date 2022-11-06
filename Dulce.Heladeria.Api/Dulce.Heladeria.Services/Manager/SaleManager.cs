@@ -234,5 +234,20 @@ namespace Dulce.Heladeria.Services.Manager
             }
         }
 
+        public async Task<List<GetSaleDto>> GetSales()
+        {
+            var saleEntities = await _saleRepository.GetAllSalesWithClients();
+            var salesDto = _mapper.Map<List<GetSaleDto>>(saleEntities);
+
+            foreach (var sale in salesDto)
+            {
+                var saleDetailEntities = await _saleDetailRepository.GetAsync(x => x.SaleId == sale.Id);
+
+                sale.TotalAmount = saleDetailEntities.Sum(x => x.Amount * x.SalePrice);
+            }
+
+            return salesDto;
+        }
+
     }
 }
