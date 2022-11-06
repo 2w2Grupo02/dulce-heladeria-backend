@@ -10,5 +10,6 @@ namespace Dulce.Heladeria.Services.IManager
     {
         Task<bool> InsertNewSale(SaleDto saleDto);
         Task<List<SalePerDayDto>> getAllSales(DateTime start, DateTime end);
+        Task<List<GetSaleDto>> GetSales();
     }
 }

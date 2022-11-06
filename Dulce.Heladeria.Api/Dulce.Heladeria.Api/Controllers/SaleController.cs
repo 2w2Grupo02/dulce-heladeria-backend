@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dulce.Heladeria.Models.Enums;
+using Dulce.Heladeria.Services.Helper;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
@@ -65,5 +67,13 @@ namespace Dulce.Heladeria.Api.Controllers
             return NoContent();
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllSales()
+        {
+            List<GetSaleDto> result = await _saleManager.GetSales();
+
+            return Ok(result);
+        }        
     }
 }
