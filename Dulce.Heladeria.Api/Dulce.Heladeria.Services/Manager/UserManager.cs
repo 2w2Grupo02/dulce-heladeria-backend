@@ -84,5 +84,57 @@ namespace Dulce.Heladeria.Services.Manager
                 passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
+
+        public async Task<List<UserGetDto>> GetAllUsers()
+        {
+            var userEntities = await _userRepository.GetAllAsync();
+            var usersDto = _mapper.Map<List<UserGetDto>>(userEntities);
+
+            return usersDto;
+        }
+
+        public async Task<UserGetDto> GetUserById(int id)
+        {
+            var userEntity = await _userRepository.GetById(id);
+            if (userEntity == null)
+            {
+                return null;
+            }
+
+            var userDto = _mapper.Map<UserGetDto>(userEntity);
+
+            return userDto;
+        }
+
+        public async Task<bool> ChangePassword(int userId, UserPasswordDto userPass)
+        {
+            var userEntity = await _userRepository.GetById(userId);
+
+            if (userEntity is null)
+            {
+                return false;
+            }
+
+            if (!PasswordHashValidation(userPass.ActualPassword, userEntity.PasswordHash, userEntity.PasswordSalt))
+            {
+                return false;
+            }
+
+            if (userPass.NewPassword != userPass.RepeatNewPassword)
+            {
+                return false;
+            }
+
+            byte[] passwordHash, passwordSalt;
+
+            PasswordHashBuilding(userPass.NewPassword, out passwordHash, out passwordSalt);
+
+            userEntity.PasswordHash = passwordHash;
+            userEntity.PasswordSalt = passwordSalt;
+
+            await _userRepository.UpdateAsync(userEntity);
+            var result = await _unitOfWork.SaveChangesAsync();
+            return result >= 0;
+        }
     }
 }

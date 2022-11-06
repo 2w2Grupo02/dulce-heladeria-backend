@@ -1,4 +1,6 @@
-﻿using Dulce.Heladeria.Services.Dtos;
+﻿using Dulce.Heladeria.Models.Enums;
+using Dulce.Heladeria.Services.Dtos;
+using Dulce.Heladeria.Services.Helper;
 using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +31,12 @@ namespace Dulce.Heladeria.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            var role = AuthHelper.GetRole(Request);
+            if (role != Roles.administrator.ToString())
+            {
+                return Unauthorized();
+            }
+
             var result = await _itemManager.InsertItem(item);
 
             if (!result)
@@ -48,6 +56,12 @@ namespace Dulce.Heladeria.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            var role = AuthHelper.GetRole(Request);
+            if (role != Roles.administrator.ToString())
+            {
+                return Unauthorized();
+            }
+
             List<ItemStockDto> result = await _itemStockManager.GetItemStock(itemId);
 
 
@@ -57,6 +71,12 @@ namespace Dulce.Heladeria.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllItems()
         {
+            var role = AuthHelper.GetRole(Request);
+            if (role != Roles.administrator.ToString())
+            {
+                return Unauthorized();
+            }
+
             List<GetItemsDto> result = await _itemManager.GetAllItems();
 
 

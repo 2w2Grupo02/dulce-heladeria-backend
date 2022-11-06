@@ -11,6 +11,7 @@ namespace Dulce.Heladeria.Repositories.IRepositories
 {
     public interface ISaleRepository : IBaseRepository<SaleEntity>, IPersistable<SaleEntity>
     {
+        Task<List<SaleEntity>> GetAllSalesWithClients();
         public Task<List<SaleEntity>> getAllSalesByDay(DateTime start);
     }
 }

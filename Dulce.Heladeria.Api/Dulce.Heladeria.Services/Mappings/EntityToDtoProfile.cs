@@ -1,5 +1,6 @@
 using AutoMapper;
 using Dulce.Heladeria.Models.Entities;
+using Dulce.Heladeria.Models.Enums;
 using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.Helper;
 using System;
@@ -38,6 +39,14 @@ namespace Dulce.Heladeria.Services.Mappings
             CreateMap<LocationEntity, LocationDto>();
             CreateMap<ProductEntity, ProductDto>()
                 .ForMember(dto => dto.Price, entity => entity.MapFrom(x => x.ListPrice));
+
+            CreateMap<SaleEntity, GetSaleDto>()
+                .ForMember(dto => dto.PaymentMethod, entity => entity.MapFrom(x => EnumHelper.GetDescription(x.PaymentMethod)))
+                .ForMember(dto => dto.ClientName, entity => entity.MapFrom(x => x.Client.BusinessName));
+
+            CreateMap<UserEntity, UserGetDto>()
+                 .ForMember(dto => dto.Rol, entity => entity.MapFrom(x => EnumHelper.GetDescription((Roles)x.Rol)))
+                 .ForMember(dto => dto.RolId, entity => entity.MapFrom(x => x.Rol));
         }
     }
 }

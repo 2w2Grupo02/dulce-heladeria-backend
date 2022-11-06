@@ -10,6 +10,7 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
@@ -89,6 +90,51 @@ namespace Dulce.Heladeria.Api.Controllers
                 accessToken = tokenHandler.WriteToken(token)
             });
 
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            List<UserGetDto> result = await _userManager.GetAllUsers();
+
+            return Ok(result);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            try
+            {
+                UserGetDto result = await _userManager.GetUserById(id);
+
+                if (result == null)
+                {
+                    return NotFound("El usuario no existe");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }            
+        }
+        [HttpPut("{userId}/changePassword")]
+        public async Task<IActionResult> ChangeUserPassword(int userId, [FromBody] UserPasswordDto userPass)
+        {
+            try
+            {
+                bool result = await _userManager.ChangePassword(userId, userPass);
+
+                if (!result)
+                {
+                    return BadRequest("Error al cambiar contraseña");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

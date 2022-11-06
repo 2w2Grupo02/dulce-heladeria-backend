@@ -20,6 +20,12 @@ namespace Dulce.Heladeria.Repositories.Repositories
         {
 
         }
+        public async Task<List<SaleEntity>> GetAllSalesWithClients()
+        {
+            List<SaleEntity> saleEntities = await BaseQuery.Include(x => x.Client).ToListAsync();
+
+            return saleEntities;
+        }
 
         public async Task<List<SaleEntity>> getAllSalesByDay(DateTime start) {
             return await BaseQuery.Where(sale => sale.Date.Day == start.Day && sale.Date.Month == start.Month && sale.Date.Year == start.Year).ToListAsync();
