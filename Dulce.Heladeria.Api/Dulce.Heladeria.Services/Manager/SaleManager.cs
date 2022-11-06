@@ -163,58 +163,42 @@ namespace Dulce.Heladeria.Services.Manager
 
                     foreach (var saleDetail in saleDto.Details)
                     {
-                        //guardar detalle
-
                         var saleDetailEntity = _mapper.Map<SaleDetailEntity>(saleDetail);
                         saleDetailEntity.SaleId = saleID;
                         await _saleDetailRepository.InsertAsync(saleDetailEntity);
 
-                        //descontar stock
+                        var quantityItems = saleDetail.ProductDetail.Count;
 
-                        //var productItemsResult = await _productItemRepository.GetAsync(x => x.Id == saleDetail.ProductId);
+                        if (quantityItems < 1)
+                        {
+                            throw new InvalidOperationException($"El producto {saleDetail.ProductName} no tiene articulos para descontar");
+                        }
 
                         foreach (var item in saleDetail.ProductDetail)
                         {
-                            var itemStockResult = await _itemStockRepository.GetAsync(x => x.Item.Id == item.Id);
-                            var itemStockEntity = itemStockResult.FirstOrDefault(x => x.Amount > 0);
+                            var itemEntity = await _itemRepository.GetById(item.Id);
 
-                            if (itemStockEntity == null)
-                            {
-                                throw new InvalidOperationException($"No hay stock del articulo {item.Name}");
-                            }
-
-                            if (itemStockEntity.Amount < saleDetail.Amount)
-                            {
-                                throw new InvalidOperationException("La cantidad a descontar excede la disponible. Cant. existente: " + itemStockEntity.Amount);
-                            }
-
-                            var itemResult = await _itemRepository.GetAsync(x => x.Id == item.Id);
-                            var itemEntity = itemResult.FirstOrDefault();
-
-                            if (itemStockEntity == null)
+                            if (itemEntity == null)
                             {
                                 throw new InvalidOperationException($"No existe el articulo {item.Name}");
                             }
 
-                            //valido si el articulo se mide en lt 
-                            float amount = saleDetail.Amount;
-                            if (itemEntity.MeasuringType == MeasuringType.liter)
-                            {
-                                amount = amount / saleDetail.ProductDetail.Count();
-                                itemStockEntity.Amount -= amount;
-                                await _itemStockRepository.UpdateAsync(itemStockEntity);
-                            }
-                            else
-                            {
-                                itemStockEntity.Amount -= amount;
-                                await _itemStockRepository.UpdateAsync(itemStockEntity);                               
-                            }
+                            float productAmount = saleDetail.Amount;
+                            float amountToDiscount = quantityItems > 1 ? (productAmount / quantityItems) : productAmount;
 
-                            //registrar movimiento
+                            var itemStockEntity = await _itemStockRepository.GetBy(x => x.Item.Id == item.Id && x.Amount >= amountToDiscount);
 
+                            if (itemStockEntity == null)
+                            {
+                                throw new InvalidOperationException($"No hay stock suficiente del articulo {item.Name}");
+                            }
+                            
+                            itemStockEntity.Amount -= amountToDiscount;
+                            await _itemStockRepository.UpdateAsync(itemStockEntity);                               
+                            
                             var newOriginMovement = new StockMovementEntity()
                             {
-                                Amount = - amount,
+                                Amount = -amountToDiscount,
                                 ItemStockId = itemStockEntity.Id,
                                 Motive = "Venta",
                                 MovementDate = DateTime.Now

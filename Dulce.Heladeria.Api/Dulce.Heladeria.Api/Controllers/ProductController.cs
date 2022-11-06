@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -61,6 +61,51 @@ namespace Dulce.Heladeria.Api.Controllers
 
             return NoContent();
 
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id,[FromBody] CreateProductDto productDto)
+        {
+            if (productDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                bool result = await _productManager.UpdateProduct(id, productDto);
+
+                if (!result)
+                {
+                    ModelState.AddModelError("error", "Error al actualizar producto");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return NoContent();
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            try
+            {
+                CreateProductDto result = await _productManager.GetProductById(id);
+
+                if (result == null)
+                {
+                    ModelState.AddModelError("error", "Error al obtener producto");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

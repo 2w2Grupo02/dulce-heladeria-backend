@@ -11,5 +11,7 @@ namespace Dulce.Heladeria.Services.IManager
         Task<List<ProductDto>> GetProductsWithAvailableItems();
         Task<List<ProductDto>> GetProductsWithItems();
         Task<bool> InsertProduct(CreateProductDto productDto);
+        Task<bool> UpdateProduct(int productId, CreateProductDto productDto);
+        Task<CreateProductDto> GetProductById(int productId);
     }
 }
