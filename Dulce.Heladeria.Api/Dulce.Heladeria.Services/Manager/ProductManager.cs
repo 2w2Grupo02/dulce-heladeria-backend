@@ -164,7 +164,7 @@ namespace Dulce.Heladeria.Services.Manager
             foreach (var productDto in productDtoList)
             {
                 var items = new List<ProductItemDto>();
-                var productItemList = await _productItemRepository.GetAsync(x => x.ProductId == productDto.Id);
+                var productItemList = await _productItemRepository.GetAsync(x => x.ProductId == productDto.Id && x.DeletionDate == null);
                 foreach (var item in productItemList)
                 {
                     var itemEntity = await _itemRepository.GetBy(x => x.Id == item.ItemId);
@@ -180,6 +180,102 @@ namespace Dulce.Heladeria.Services.Manager
             }
 
             return productDtoList;
+        }
+
+        public async Task<bool> UpdateProduct(int productId, CreateProductDto productDto)
+        {           
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                try
+                {
+                    var productEntity = await _productRepository.GetById(productId);
+
+                    if (productEntity == null)
+                    {
+                        throw new InvalidOperationException($"No existe el producto {productDto.Name}");
+                    }
+
+                    productEntity.Name = productDto.Name;
+                    productEntity.ListPrice = productDto.Price;
+                    productEntity.MaxItemAmount = productDto.MaxItemAmount;
+                    productEntity.ImageUrl = productDto.ImageUrl;
+                    await _productRepository.UpdateAsync(productEntity);
+
+                    var productItemList = await _productItemRepository.GetAsync(x => x.ProductId == productId);
+
+                    foreach (var item in productDto.Items)
+                    {
+                        var productItem = productItemList.Where(x => x.ItemId == item.Id).FirstOrDefault();
+
+                        if (productItem == null)
+                        {
+                            var newProductItem = new ProductItemEntity() { ItemId = item.Id, ProductId = productId };
+                            await _productItemRepository.InsertAsync(newProductItem);
+                        }
+                        else if(productItem.DeletionDate != null)
+                        {
+                            productItem.DeletionDate = null;
+                            await _productItemRepository.UpdateAsync(productItem);
+                        }
+                    }
+
+                    foreach (var productItem in productItemList)
+                    {
+                        if (productItem.DeletionDate == null && productDto.Items.Where(x => x.Id == productItem.ItemId).FirstOrDefault() == null)
+                        {
+                            productItem.DeletionDate = DateTime.Now;
+                            await _productItemRepository.UpdateAsync(productItem);
+                        }
+                    }
+
+                    var resultsave = await _unitOfWork.SaveChangesAsync();
+
+                    if (resultsave >= 1)
+                    {
+                        transaction.Commit();
+                        return true;
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+
+                }
+                catch (InvalidOperationException ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+
+            }
+        }
+
+        public async Task<CreateProductDto> GetProductById(int productId)
+        {
+            var productEntity = await _productRepository.GetById(productId);
+            var productDto = _mapper.Map<CreateProductDto> (productEntity);
+            
+            var items = new List<ProductItemDto>();
+            var productItemList = await _productItemRepository.GetAsync(x => x.ProductId == productId && x.DeletionDate == null);
+            foreach (var item in productItemList)
+            {
+                var itemEntity = await _itemRepository.GetBy(x => x.Id == item.ItemId);
+                if (itemEntity == null)
+                {
+                    throw new InvalidOperationException($"No existe el articulo {item.ItemId}");
+                }
+
+                items.Add(new ProductItemDto() { Id = item.ItemId, Name = itemEntity.Name });
+            }
+            productDto.Items = items;
+
+            return productDto;
         }
     }
 }

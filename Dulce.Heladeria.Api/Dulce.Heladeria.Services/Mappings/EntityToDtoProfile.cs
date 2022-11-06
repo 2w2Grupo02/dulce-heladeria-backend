@@ -47,6 +47,9 @@ namespace Dulce.Heladeria.Services.Mappings
             CreateMap<UserEntity, UserGetDto>()
                  .ForMember(dto => dto.Rol, entity => entity.MapFrom(x => EnumHelper.GetDescription((Roles)x.Rol)))
                  .ForMember(dto => dto.RolId, entity => entity.MapFrom(x => x.Rol));
+
+            CreateMap<ProductEntity, CreateProductDto>()
+                .ForMember(dto => dto.Price, entity => entity.MapFrom(x => x.ListPrice));
         }
     }
 }
