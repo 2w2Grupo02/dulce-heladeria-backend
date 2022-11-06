@@ -10,6 +10,5 @@ namespace Dulce.Heladeria.Repositories.IRepositories
 {
     public interface IProductRepository: IBaseRepository<ProductEntity>, IPersistable<ProductEntity>
     {
-        Task<List<MostSaleProduct>> getProducts(DateTime start, DateTime end);
     }
 }

@@ -3,6 +3,7 @@ using Dulce.Heladeria.Models.Entities;
 using Dulce.Heladeria.Models.Enums;
 using Dulce.Heladeria.Models.UnitOfWork;
 using Dulce.Heladeria.Repositories.IRepositories;
+using Dulce.Heladeria.Repositories.Repositories;
 using Dulce.Heladeria.Services.Dtos;
 using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Hosting;
@@ -69,10 +70,6 @@ namespace Dulce.Heladeria.Services.Manager
 
         public async Task<List<SalesWithMethod>> getAllSalesByMethod(DateTime start)
         {
-            //var sales = await _saleRepository.GetAllAsync();
-            //var daySales = sales.Where(sales => sales.Date == start);
-            //List<SalesWithMethod> ventas = new List<SalesWithMethod>();
-
             var sales = await _saleRepository.getAllSalesByDay(start);
 
             List<SaleWithPayment> salesWithPayment = new List<SaleWithPayment>();
@@ -124,6 +121,21 @@ namespace Dulce.Heladeria.Services.Manager
 
 
             return salesWithMethods; 
+        }
+
+        public async Task<List<RankingProduct>> GetMostSaleProductsByRange(DateTime start, DateTime end)
+        {
+
+            var products = await _saleDetailRepository.getProducts(start, end);
+
+            List<RankingProduct> rankingProducts = new List<RankingProduct>();
+
+            foreach (var product in products)
+            {
+                rankingProducts.Add(new RankingProduct(product.Name, product.Cant, product.Total));
+            }
+
+            return rankingProducts;
         }
 
         public async Task<bool> InsertNewSale(SaleDto saleDto)

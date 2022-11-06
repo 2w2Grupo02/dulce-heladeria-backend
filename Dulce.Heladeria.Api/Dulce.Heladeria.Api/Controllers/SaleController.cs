@@ -18,6 +18,7 @@ namespace Dulce.Heladeria.Api.Controllers
     public class SaleController : ControllerBase
     {
         private readonly ISaleManager _saleManager;
+        
         public SaleController(ISaleManager saleManager)
         {
             _saleManager = saleManager;
@@ -28,6 +29,15 @@ namespace Dulce.Heladeria.Api.Controllers
         {
             List<SalePerDayDto> result = await _saleManager
                 .getAllSales(rangeDto.start, rangeDto.end);
+            return Ok(result);
+        }
+
+
+        [HttpGet("/top")]
+        public async Task<IActionResult> GetTopSellingProducts([FromQuery] DateTime start, [FromQuery] DateTime end)
+        {
+            List<RankingProduct> result = await _saleManager.GetMostSaleProductsByRange(start, end);
+
             return Ok(result);
         }
 

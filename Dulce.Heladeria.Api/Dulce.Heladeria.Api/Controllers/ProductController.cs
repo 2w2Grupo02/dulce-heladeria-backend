@@ -36,14 +36,6 @@ namespace Dulce.Heladeria.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/top")]
-        public async Task<IActionResult> GetTopSellingProducts([FromQuery] DateTime start, [FromQuery] DateTime end)
-        {
-            List<RankingProduct> result = await _productManager.GetMostSaleProductsByRange(start, end);
-
-            return Ok(result);
-        }
-
         [HttpPost]
         public async Task<IActionResult> InsertProduct([FromBody] CreateProductDto productDto)
         {
