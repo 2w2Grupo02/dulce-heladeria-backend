@@ -13,5 +13,6 @@ namespace Dulce.Heladeria.Services.Dtos
         public string Dni { get; set; }
         public string Email { get; set; }
         public string Rol { get; set; }
+        public string RolId { get; set; }
     }
 }

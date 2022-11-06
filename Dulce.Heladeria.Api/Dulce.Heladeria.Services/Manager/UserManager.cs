@@ -92,5 +92,18 @@ namespace Dulce.Heladeria.Services.Manager
 
             return usersDto;
         }
+
+        public async Task<UserGetDto> GetUserById(int id)
+        {
+            var userEntity = await _userRepository.GetById(id);
+            if (userEntity == null)
+            {
+                return null;
+            }
+
+            var userDto = _mapper.Map<UserGetDto>(userEntity);
+
+            return userDto;
+        }
     }
 }
