@@ -98,5 +98,25 @@ namespace Dulce.Heladeria.Api.Controllers
 
             return Ok(result);
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            try
+            {
+                UserGetDto result = await _userManager.GetUserById(id);
+
+                if (result == null)
+                {
+                    return NotFound("El usuario no existe");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
     }
 }
