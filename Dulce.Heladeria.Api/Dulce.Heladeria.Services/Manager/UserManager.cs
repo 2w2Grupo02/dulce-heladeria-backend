@@ -105,5 +105,36 @@ namespace Dulce.Heladeria.Services.Manager
 
             return userDto;
         }
+
+        public async Task<bool> ChangePassword(int userId, UserPasswordDto userPass)
+        {
+            var userEntity = await _userRepository.GetById(userId);
+
+            if (userEntity is null)
+            {
+                return false;
+            }
+
+            if (!PasswordHashValidation(userPass.ActualPassword, userEntity.PasswordHash, userEntity.PasswordSalt))
+            {
+                return false;
+            }
+
+            if (userPass.NewPassword != userPass.RepeatNewPassword)
+            {
+                return false;
+            }
+
+            byte[] passwordHash, passwordSalt;
+
+            PasswordHashBuilding(userPass.NewPassword, out passwordHash, out passwordSalt);
+
+            userEntity.PasswordHash = passwordHash;
+            userEntity.PasswordSalt = passwordSalt;
+
+            await _userRepository.UpdateAsync(userEntity);
+            var result = await _unitOfWork.SaveChangesAsync();
+            return result >= 0;
+        }
     }
 }

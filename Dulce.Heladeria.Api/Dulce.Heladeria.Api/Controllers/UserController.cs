@@ -115,8 +115,26 @@ namespace Dulce.Heladeria.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }            
+        }
+        [HttpPut("{userId}/changePassword")]
+        public async Task<IActionResult> ChangeUserPassword(int userId, [FromBody] UserPasswordDto userPass)
+        {
+            try
+            {
+                bool result = await _userManager.ChangePassword(userId, userPass);
+
+                if (!result)
+                {
+                    return BadRequest("Error al cambiar contraseña");
+                }
+
+                return Ok(result);
             }
-            
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
