@@ -84,29 +84,6 @@ namespace Dulce.Heladeria.Services.Manager
             return productsDtoList;
         }
 
-        public async Task<List<RankingProduct>> GetMostSaleProductsByRange(DateTime start, DateTime end)
-        {
-           //Obtengo todas la ventas
-           var sales = await _saleRepository.GetAllAsync();
-
-            //filtro por fechas
-            var salesFiltered = sales
-                .Where(sale => sale.Date <= end && sale.Date >= start);
-
-            //hago una lista de detalles
-            var salesDetails = new List<SaleDetailEntity>();
-
-            //itero en todas las ventas para traer sus detalles y lo almaceno el la lista de detalles
-            foreach (var sale in salesFiltered) {
-                var details = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
-                foreach (var d in details) {
-                    salesDetails.Add(d); 
-                }
-            }
-
-            var salesDetailsGroupByProduct = salesDetails.GroupBy(x => x.ProductId);
-            return null;
-        }
 
         public async Task<bool> InsertProduct(CreateProductDto productDto)
         {

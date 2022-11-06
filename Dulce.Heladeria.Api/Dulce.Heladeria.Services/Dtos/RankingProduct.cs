@@ -8,9 +8,16 @@ namespace Dulce.Heladeria.Services.Dtos
 {
     public class RankingProduct
     {
-        int posicion;
-        ProductEntity producto;
-        double total;
-        int cant; 
+        public string Producto { get; set; }
+        public int Cant { get; set; }
+        public double Total { get; set; }
+
+
+        public RankingProduct(string producto,int cant, double total)
+        {
+            this.Producto = producto;
+            this.Total = total;
+            this.Cant = cant;
+        }
     }
 }
