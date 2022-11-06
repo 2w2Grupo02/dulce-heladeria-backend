@@ -14,7 +14,7 @@ namespace Dulce.Heladeria.Repositories.BaseRepositories
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity>, IPersistable<TEntity> where TEntity : class, IBaseEntity
     {
-        private readonly ApplicationDbContext _bd;
+        protected readonly ApplicationDbContext _bd;
         protected DbSet<TEntity> DbSet => _bd.Set<TEntity>();
         protected virtual IQueryable<TEntity> BaseQuery => DbSet;
         public BaseRepository(ApplicationDbContext bd)

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -32,6 +32,14 @@ namespace Dulce.Heladeria.Api.Controllers
         public async Task<IActionResult> GetProductsWithItems()
         {
             List<ProductDto> result = await _productManager.GetProductsWithItems();
+
+            return Ok(result);
+        }
+
+        [HttpGet("/top")]
+        public async Task<IActionResult> GetTopSellingProducts([FromQuery] DateTime start, [FromQuery] DateTime end)
+        {
+            List<RankingProduct> result = await _productManager.GetMostSaleProductsByRange(start, end);
 
             return Ok(result);
         }
