@@ -13,5 +13,6 @@ namespace Dulce.Heladeria.Services.IManager
         Task<UserDto> Login(string usuario, string password);
         Task<List<UserGetDto>> GetAllUsers();
         Task<UserGetDto> GetUserById(int id);
+        Task<bool> ChangePassword(int userId, UserPasswordDto userPass);
     }
 }
