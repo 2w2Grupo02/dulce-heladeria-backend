@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dulce.Heladeria.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
