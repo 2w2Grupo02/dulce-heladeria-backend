@@ -10,5 +10,7 @@ namespace Dulce.Heladeria.Services.IManager
     {
         Task<bool> InsertItem(ItemDto item);
         Task<List<GetItemsDto>> GetAllItems();
+        Task<bool> UpdateItem(int id, ItemDto item);
+        Task<ItemDto> GetItemById(int id);
     }
 }
