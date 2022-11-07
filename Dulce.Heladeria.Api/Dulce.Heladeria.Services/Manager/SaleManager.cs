@@ -138,7 +138,7 @@ namespace Dulce.Heladeria.Services.Manager
             return rankingProducts;
         }
 
-        public async Task<bool> InsertNewSale(SaleDto saleDto)
+        public async Task<int> InsertNewSale(SaleDto saleDto)
         {
             using (var transaction = _unitOfWork.BeginTransaction())
             {
@@ -215,17 +215,17 @@ namespace Dulce.Heladeria.Services.Manager
                     }
 
                     transaction.Commit();
-                    return true;
+                    return saleID;
                 }
                 catch (InvalidOperationException ex)
                 {
                     transaction.Rollback();
                     throw ex;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     transaction.Rollback();
-                    return false;
+                    throw ex;
                 }
             }
         }
