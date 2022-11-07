@@ -5,6 +5,7 @@ using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -81,7 +82,51 @@ namespace Dulce.Heladeria.Api.Controllers
 
 
             return Ok(result);
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateItem(int id, [FromBody] ItemDto item)
+        {
+            var role = AuthHelper.GetRole(Request);
+            if (role != Roles.administrator.ToString())
+            {
+                return Unauthorized();
+            }
 
+            try
+            {
+                bool result = await _itemManager.UpdateItem(id, item);
+
+                if (!result)
+                {
+                    return BadRequest("Error al actualizar el articulo");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return NoContent();
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetItemById(int id)
+        {
+            try
+            {
+                ItemDto result = await _itemManager.GetItemById(id);
+
+                if (result == null)
+                {
+                    ModelState.AddModelError("error", "Error al obtener articulo");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

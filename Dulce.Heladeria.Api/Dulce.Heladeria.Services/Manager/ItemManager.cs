@@ -51,5 +51,28 @@ namespace Dulce.Heladeria.Services.Manager
 
             return itemDtoList;
         }
+
+        public async Task<bool> UpdateItem(int id, ItemDto item)
+        {
+            ItemEntity itemEntity = await _itemRepository.GetById(id);
+
+            itemEntity.Name = item.Name;
+            itemEntity.Description = item.Description;
+            itemEntity.ItemTypeId = item.ItemTypeId;
+            itemEntity.MeasuringType = item.MeasuringType;
+
+            await _itemRepository.UpdateAsync(itemEntity);
+            var resultsave = await _unitOfWork.SaveChangesAsync();
+
+            return resultsave >= 1 ? true : false;
+        }
+
+        public async Task<ItemDto> GetItemById(int id)
+        {
+            var productEntity = await _itemRepository.GetById(id);
+            var productDto = _mapper.Map<ItemDto>(productEntity);            
+
+            return productDto;
+        }
     }
 }
