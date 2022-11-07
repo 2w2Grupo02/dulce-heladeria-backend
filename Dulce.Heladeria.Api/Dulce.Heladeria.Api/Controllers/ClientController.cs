@@ -3,6 +3,7 @@ using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -46,6 +47,25 @@ namespace Dulce.Heladeria.Api.Controllers
 
             return Ok(result);
 
+        }
+        [HttpGet("name")]
+        public async Task<IActionResult> GetClientByName([FromQuery]GetClientDto client)
+        {
+            try
+            {
+                GetClientsDto result = await _clientManager.GetClientByName(client);
+
+                if (result == null)
+                {
+                    return NotFound("El cliente no existe");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
