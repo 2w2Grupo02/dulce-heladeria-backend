@@ -5,6 +5,7 @@ using Dulce.Heladeria.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,5 +26,17 @@ namespace Dulce.Heladeria.Repositories.Repositories
 
             return locationEntity;
         }
+
+        public async Task<List<LocationEntity>> GetLocation(int itemId)
+        {
+            List<LocationEntity> list = await BaseQuery
+                .Include(x => x.ItemType)
+                .Include(x => x.Deposit)
+                .Where(x => x.Id == itemId)
+                .ToListAsync();
+
+            return list;
+        }
+
     }
 }

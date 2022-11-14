@@ -33,8 +33,9 @@ namespace Dulce.Heladeria.Services.Manager
 
             foreach (var location in locationdtolist)
             {
-                var itemLocationentitylist = await _locationRepository.GetAsync(x => x.Id == location.Id);
-                location.Capacity = itemLocationentitylist.Sum(x => x.Capacity);
+                var itemLocationentity = await _locationRepository.GetLocation(location.Id);
+                //var itemLocationentitylist = await _locationRepository.GetAsync(x => x.Id == location.Id);
+                location.Capacity = itemLocationentity.Sum(x => x.Capacity);
             }
 
             return locationdtolist;

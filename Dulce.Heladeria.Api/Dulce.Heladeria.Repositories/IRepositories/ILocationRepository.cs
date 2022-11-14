@@ -10,5 +10,6 @@ namespace Dulce.Heladeria.Repositories.IRepositories
     public interface ILocationRepository: IBaseRepository<LocationEntity>, IPersistable<LocationEntity>
     {
         Task<List<LocationEntity>> GetAllLocations();
+        Task<List<LocationEntity>> GetLocation(int id);
     }
 }
