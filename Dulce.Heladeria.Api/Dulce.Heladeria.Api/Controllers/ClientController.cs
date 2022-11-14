@@ -1,4 +1,6 @@
+using Dulce.Heladeria.Models.Enums;
 using Dulce.Heladeria.Services.Dtos;
+using Dulce.Heladeria.Services.Helper;
 using Dulce.Heladeria.Services.IManager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -66,6 +68,31 @@ namespace Dulce.Heladeria.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateClient(int id, [FromBody] ClientDto client)
+        {
+           // var role = AuthHelper.GetRole(Request);
+            //if (role != Roles.administrator.ToString())
+           // {
+            //    return Unauthorized();
+            //}
+
+            try
+            {
+                bool result = await _clientManager.UpdateClient(id, client);
+
+                if (!result)
+                {
+                    return BadRequest("Error al actualizar el cliente");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return NoContent();
         }
     }
 }
