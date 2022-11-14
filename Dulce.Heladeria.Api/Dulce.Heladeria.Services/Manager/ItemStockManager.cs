@@ -166,5 +166,86 @@ namespace Dulce.Heladeria.Services.Manager
                 }
             }
         }
+
+        public async Task<bool> NewEntryToStock(NewItemStockDto newEntry)
+        {
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {              
+                try
+                {
+                    var location = await _locationRepository.GetById(newEntry.LocationId);
+
+                    if (location == null)
+                    {
+                        throw new InvalidOperationException("No existe la ubicacion ingresada");
+                    }
+
+                    var item = await _itemRepository.GetById(newEntry.ItemId);
+
+                    if (item == null)
+                    {
+                        throw new InvalidOperationException("No existe la ubicacion ingresada");
+                    }
+
+                    var itemStock = await _itemStockRepository.GetBy(x => x.ItemId == newEntry.ItemId && x.LocationId == newEntry.LocationId);
+                    int itemStockId;
+                    if (itemStock is null)
+                    {
+                        if (newEntry.Amount > location.Capacity)
+                        {
+                            throw new InvalidOperationException($"La cantidad ({newEntry.Amount}) a ingresar del articulo {item.Name} excede la capacidad de la ubicacion {location.Column}-{location.Row} ({location.Capacity})");
+                        }
+                        var newItemStock = _mapper.Map<ItemStockEntity>(newEntry);
+                        newItemStock.EntryDate = DateTime.Now;
+                        itemStockId = await _itemStockRepository.SaveAsync(newItemStock);
+                    }
+                    else
+                    {
+                        itemStock.Amount += newEntry.Amount;
+                        if (itemStock.Amount > location.Capacity)
+                        {
+                            throw new InvalidOperationException($"La cantidad ({newEntry.Amount}) a ingresar del articulo {item.Name} excede la capacidad de la ubicacion {location.Column}-{location.Row} ({location.Capacity})");
+                        }
+                        await _itemStockRepository.UpdateAsync(itemStock);
+                        itemStockId = itemStock.Id;
+                    }
+
+                    var newMovement = new StockMovementEntity()
+                    {
+                        Amount = newEntry.Amount,
+                        ItemStockId = itemStockId,
+                        Motive = "Ingreso de articulo",
+                        MovementDate = DateTime.Now
+                    };
+                    await _stockMovementRepository.InsertAsync(newMovement);
+
+                    var resultsave = await _unitOfWork.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    return resultsave >= 1 ? true : false;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+            }            
+        }
+
+        public async Task<List<DestinationLocationDto>> GetLocations(int itemId, int depositId)
+        {
+            var itemEntity = await _itemRepository.GetById(itemId);
+            var destinationLocations = await _locationRepository.GetAsync(x => x.ItemTypeId == itemEntity.ItemTypeId && x.DepositId == depositId);           
+
+            var destinationLocationsDto = _mapper.Map<List<DestinationLocationDto>>(destinationLocations);
+
+            return destinationLocationsDto;
+        }
     }
 }

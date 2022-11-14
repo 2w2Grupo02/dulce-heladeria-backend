@@ -53,5 +53,52 @@ namespace Dulce.Heladeria.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost()]
+        public async Task<IActionResult> NewEntryToStock([FromBody] NewItemStockDto newEntry)
+        {
+            if (newEntry == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                bool result = await _itemStockManager.NewEntryToStock(newEntry);
+
+                if (!result)
+                {
+                    ModelState.AddModelError("error prueba", "Error al insertar articulos al stock");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("locations")]
+        public async Task<IActionResult> GetLocations(int itemId, int depositId)
+        {
+            try
+            {
+                List<DestinationLocationDto> result = await _itemStockManager.GetLocations(itemId, depositId);
+
+                if (result == null)
+                {
+                    ModelState.AddModelError("error", "Error al obtener ubicaciones");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
