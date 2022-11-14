@@ -27,10 +27,16 @@ namespace Dulce.Heladeria.Api.Controllers
             _config = config;
         }
 
+<<<<<<< HEAD
         [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto user)
         {
+=======
+        [HttpPost]
+        public async Task<IActionResult> InsertUser([FromBody] CreateUserDto user)
+        {   
+>>>>>>> origin/LucianosBranch
             if (user == null)
             {
                 return BadRequest(ModelState);
