@@ -15,7 +15,7 @@ namespace Dulce.Heladeria.Repositories.Repositories
     {
         public ItemRepository(ApplicationDbContext bd): base(bd)
         {
-        }
+        } 
 
         public async Task<List<ItemEntity>> GetAllItems()
         {

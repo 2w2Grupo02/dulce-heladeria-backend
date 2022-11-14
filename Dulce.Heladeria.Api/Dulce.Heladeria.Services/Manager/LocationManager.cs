@@ -25,20 +25,21 @@ namespace Dulce.Heladeria.Services.Manager
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-       // public async Task<List<GetLocationDto>> GetAllLocations()
-        //{
-          //  List<GetLocationDto> LocationEntityList = await _locationRepository.GetAllAsync();
+        public async Task<List<GetLocationDto>> GetAllLocations()
+        {
+            List<LocationEntity> locationentitylist = await _locationRepository.GetAllAsync();
 
-           // var LocationDtoList = _mapper.Map<List<GetLocationDto>>(LocationEntityList);
+            var locationdtolist = _mapper.Map<List<GetLocationDto>>(locationentitylist);
 
-            //foreach (var location in LocationDtoList)
-            //{
-            //    var itemStockEntityList = await _locationRepository.GetAsync(x => x.DepositId == deposit.Id);
-            //    deposit.Capacity = itemStockEntityList.Sum(x => x.Capacity);
-            //}
+            foreach (var location in locationdtolist)
+            {
+                var itemLocationentity = await _locationRepository.GetLocation(location.Id);
+                //var itemLocationentitylist = await _locationRepository.GetAsync(x => x.Id == location.Id);
+                location.Capacity = itemLocationentity.Sum(x => x.Capacity);
+            }
 
-            //return depositDtoList;
-       //}
+            return locationdtolist;
+        }
 
         public async Task<bool> InsertLocation(LocationDto location)
         {

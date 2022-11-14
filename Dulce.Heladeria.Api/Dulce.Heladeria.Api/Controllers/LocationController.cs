@@ -19,13 +19,13 @@ namespace Dulce.Heladeria.Api.Controllers
             _locationManager = locationManager;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllLocations()
-        //{
-        //    List<GetLocationDto> result = await _depositManager.GetAllDeposits();
+        [HttpGet]
+        public async Task<IActionResult> GetAllLocations()
+        {
+            List<GetLocationDto> result = await _locationManager.GetAllLocations();
 
-        //    return Ok(result);
-        //}
+            return Ok(result);
+        }
 
         [HttpPost]
         public async Task<IActionResult> InsertLocation([FromBody] LocationDto location)

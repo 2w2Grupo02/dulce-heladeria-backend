@@ -8,7 +8,7 @@ namespace Dulce.Heladeria.Services.IManager
 {
     public interface ILocationManager
     {
-        //Task<List<GetLocationDto>> GetAllLocations(); 
+        Task<List<GetLocationDto>> GetAllLocations(); 
         Task<bool> InsertLocation(LocationDto location);
     }
 }
