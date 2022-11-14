@@ -25,7 +25,8 @@ namespace Dulce.Heladeria.Repositories.Repositories
 
         public List<StockMovementEntity> getAllMovementsByItem(int itemStockId)
         {
-            return BaseQuery.Where(x => x.ItemStockId == itemStockId).ToList();
+            return //BaseQuery.Where(x => x.ItemStockId == itemStockId).ToList();
+                BaseQuery.Include(x => x.ItemStock).Where(x => x.ItemStock.Item.Id == itemStockId).ToList(); 
         }
     }
 }
