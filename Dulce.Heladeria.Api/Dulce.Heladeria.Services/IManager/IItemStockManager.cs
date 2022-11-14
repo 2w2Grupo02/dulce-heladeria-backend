@@ -11,5 +11,7 @@ namespace Dulce.Heladeria.Services.IManager
         Task<List<ItemStockDto>> GetItemStock(int itemId);
         Task<bool> InsertStockMovement(StockMovementDto movement);
         Task<ItemStockLocationDto> GetAvailableLocations(int itemStockId, int depositId);
+        Task<bool> NewEntryToStock(NewItemStockDto newEntry);
+        Task<List<DestinationLocationDto>> GetLocations(int itemId, int depositId);
     }
 }

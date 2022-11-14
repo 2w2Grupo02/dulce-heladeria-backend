@@ -22,6 +22,7 @@ namespace Dulce.Heladeria.Services.Mappings
             CreateMap<ProductItemDto, ProductItemEntity>()
                 .ForMember(entity => entity.ItemId, dto => dto.MapFrom(x => x.Id))
                 .ForMember(entity => entity.Id, dto => dto.MapFrom(x => 0));
+            CreateMap<NewItemStockDto, ItemStockEntity>();
         }
     }
 }
