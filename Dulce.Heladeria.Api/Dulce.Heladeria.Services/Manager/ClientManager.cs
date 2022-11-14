@@ -48,5 +48,33 @@ namespace Dulce.Heladeria.Services.Manager
 
             return clientDtoList;
         }
+
+        public async Task<GetClientsDto> GetClientByName(GetClientDto client)
+        {
+            var clientEntity = await _clientRepository.GetBy(x=> x.BusinessName.ToLower().Contains(client.BusinessName.ToLower()));
+            if (clientEntity == null)
+            {
+                return null;
+            }
+
+            var userDto = _mapper.Map<GetClientsDto>(clientEntity);
+
+            return userDto;
+        }
+        public async Task<bool> UpdateClient(int id, ClientDto client)
+        {
+            ClientEntity clientEntity = await _clientRepository.GetById(id);
+
+            clientEntity.BusinessName = client.BusinessName;
+            clientEntity.Identifier = client.Identifier;
+            clientEntity.IdentifierTypeId = client.IdentifierTypeId;
+            clientEntity.HomeAdress = client.HomeAdress;
+            clientEntity.Email = client.Email;
+
+            await _clientRepository.UpdateAsync(clientEntity);
+            var resultsave = await _unitOfWork.SaveChangesAsync();
+
+            return resultsave >= 1 ? true : false;
+        }
     }
 }

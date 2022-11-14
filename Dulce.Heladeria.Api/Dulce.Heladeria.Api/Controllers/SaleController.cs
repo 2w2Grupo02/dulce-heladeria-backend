@@ -70,19 +70,18 @@ namespace Dulce.Heladeria.Api.Controllers
             {
                 var result = await _saleManager.InsertNewSale(saleDto);
 
-                if (!result)
+                if (result == 0)
                 {
                     ModelState.AddModelError("error prueba", "Error al insertar nueva venta");
                     return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
                 }
+
+                return Ok(new {saleId = result});
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
-            return NoContent();
-
         }
 
         [HttpGet]
