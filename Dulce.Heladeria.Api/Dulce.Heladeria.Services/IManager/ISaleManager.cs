@@ -11,7 +11,7 @@ namespace Dulce.Heladeria.Services.IManager
         Task<int> InsertNewSale(SaleDto saleDto);
         Task<List<SalePerDayDto>> getAllSales(DateTime start, DateTime end);
         Task<List<GetSaleDto>> GetSales();
-        Task<List<RankingProduct>> GetMostSaleProductsByRange(DateTime start, DateTime end);
+        Task<List<RankingProductDto>> GetMostSaleProductsByRange(DateTime start, DateTime end);
         Task<List<SalesWithMethod>> getAllSalesByMethod(DateTime start);
     }
 }

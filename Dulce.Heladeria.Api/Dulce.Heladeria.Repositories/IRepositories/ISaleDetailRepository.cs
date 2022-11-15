@@ -10,6 +10,6 @@ namespace Dulce.Heladeria.Repositories.IRepositories
 {
     public interface ISaleDetailRepository: IBaseRepository<SaleDetailEntity>, IPersistable<SaleDetailEntity>
     {
-        Task<List<MostSaleProduct>> getProducts(DateTime start, DateTime end);
+        Task<List<SaleDetailEntity>> GetSaleProductsByRange(DateTime start, DateTime end);
     }
 }
