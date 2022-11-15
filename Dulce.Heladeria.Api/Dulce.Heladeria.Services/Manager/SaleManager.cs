@@ -123,17 +123,33 @@ namespace Dulce.Heladeria.Services.Manager
             return salesWithMethods; 
         }
 
-        public async Task<List<RankingProduct>> GetMostSaleProductsByRange(DateTime start, DateTime end)
+        public async Task<List<RankingProductDto>> GetMostSaleProductsByRange(DateTime start, DateTime end)
         {
+            var saleProducts = await _saleDetailRepository.GetSaleProductsByRange(start, end);
+            var rankingProducts = new List<RankingProductDto>();
 
-            var products = await _saleDetailRepository.getProducts(start, end);
-
-            List<RankingProduct> rankingProducts = new List<RankingProduct>();
-
-            foreach (var product in products)
+            var saleProductGroup = saleProducts.GroupBy(x => x.ProductId).ToList();
+            
+            foreach (var saleProduct in saleProductGroup)
             {
-                rankingProducts.Add(new RankingProduct(product.Name, product.Cant, product.Total));
+                var rankingProduct = new RankingProductDto()
+                {
+                    ProductName = saleProduct.First().Product.Name,
+                    TotalAmount = saleProduct.Sum(x => x.Amount),
+                    TotalSaleAmount = saleProduct.Sum(x => x.Amount * x.SalePrice),
+                    TotalSaleQuantity = saleProduct.Count()
+                };
+
+                rankingProducts.Add(rankingProduct);
             }
+
+            rankingProducts = rankingProducts.OrderByDescending(x => x.TotalSaleAmount).Take(5).ToList();
+            int rankingPosition = 1;
+            rankingProducts.ForEach(x =>
+            {
+                x.RankingPosition = rankingPosition;
+                rankingPosition++;
+            });
 
             return rankingProducts;
         }

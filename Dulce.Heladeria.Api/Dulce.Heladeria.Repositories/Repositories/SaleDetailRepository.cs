@@ -18,28 +18,13 @@ namespace Dulce.Heladeria.Repositories.Repositories
             
         }
 
-        public async Task<List<MostSaleProduct>> getProducts(DateTime start, DateTime end)
+        public async Task<List<SaleDetailEntity>> GetSaleProductsByRange(DateTime start, DateTime end)
         {
             var products = await BaseQuery.Include(x => x.Product).Include(x => x.Sale).
-                Where(x => x.Sale.Date >= start && x.Sale.Date <= end)
-                .GroupBy(x => x.Product.Name)
-                .Select(x => new MostSaleProduct
-                {
-                    Name = x.Key,
-                    Cant = x.Select(x => x.Product.Id).Count(),
-                    Total = x.Select(x => x.SalePrice * x.Amount).Sum()
-                })
-                .OrderBy(x => x.Total)
-                .ThenBy(x => x.Cant)
+                Where(x => x.Sale.Date >= start && x.Sale.Date <= end)                
                 .ToListAsync();
 
             return products;
         }
-    }
-    public class MostSaleProduct
-    {
-        public string Name { get; set; }
-        public int Cant { get; set; }
-        public double Total { get; set; }
     }
 }
