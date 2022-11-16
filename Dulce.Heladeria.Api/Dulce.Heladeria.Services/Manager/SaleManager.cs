@@ -51,17 +51,15 @@ namespace Dulce.Heladeria.Services.Manager
         {
             var sales = await _saleRepository.GetAllAsync();
 
-            var salesagrupado = sales
+            var salesAgroupedByDate = sales
                 .Where(sale => sale.Date.Date <= end && sale.Date.Date >= start).GroupBy(x => x.Date.Date).ToList();
 
-            var salesFiltered = sales
-                .Where(sale => sale.Date <= end && sale.Date >= start).ToList();
             List<SalePerDayDto> ventasDto = new List<SalePerDayDto>();
 
-            foreach (var items in salesagrupado)
+            foreach (var salesDay in salesAgroupedByDate)
             {
                 double total = 0;
-                foreach (var sale in items)
+                foreach (var sale in salesDay)
                 {
                     var detalles = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
                     
@@ -71,7 +69,7 @@ namespace Dulce.Heladeria.Services.Manager
                     }
                    
                 }
-                ventasDto.Add(new SalePerDayDto() { Date = items.Key, Total = total });
+                ventasDto.Add(new SalePerDayDto() { Date = salesDay.Key, Total = total });
             }
 
             return ventasDto; 
