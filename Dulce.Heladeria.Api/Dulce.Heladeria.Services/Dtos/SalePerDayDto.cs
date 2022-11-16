@@ -7,13 +7,7 @@ namespace Dulce.Heladeria.Services.Dtos
 {
     public class SalePerDayDto
     {
-        public SalePerDayDto(DateTime date, float total)
-        {
-            Date = date;
-            Total = total;
-        }
-
         public DateTime Date { get; set; }
-        public float Total { get; set; }
+        public double Total { get; set; }
     }
 }

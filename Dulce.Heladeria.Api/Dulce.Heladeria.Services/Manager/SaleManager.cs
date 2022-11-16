@@ -50,19 +50,28 @@ namespace Dulce.Heladeria.Services.Manager
         public async Task<List<SalePerDayDto>> getAllSales(DateTime start, DateTime end)
         {
             var sales = await _saleRepository.GetAllAsync();
-            
+
+            var salesagrupado = sales
+                .Where(sale => sale.Date.Date <= end && sale.Date.Date >= start).GroupBy(x => x.Date.Date).ToList();
+
             var salesFiltered = sales
-                .Where(sale => sale.Date <= end && sale.Date >= start);
+                .Where(sale => sale.Date <= end && sale.Date >= start).ToList();
             List<SalePerDayDto> ventasDto = new List<SalePerDayDto>();
 
-            foreach (var sale in salesFiltered) { 
-                var detalles = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
-                float total = 0; 
-                foreach (var detalle in detalles)
+            foreach (var items in salesagrupado)
+            {
+                double total = 0;
+                foreach (var sale in items)
                 {
-                    total += detalle.Amount; 
+                    var detalles = await _saleDetailRepository.GetAsync(detalle => detalle.SaleId == sale.Id);
+                    
+                    foreach (var detalle in detalles)
+                    {
+                        total += detalle.Amount * detalle.SalePrice;
+                    }
+                   
                 }
-                ventasDto.Add(new SalePerDayDto(sale.Date, total));
+                ventasDto.Add(new SalePerDayDto() { Date = items.Key, Total = total });
             }
 
             return ventasDto; 
@@ -98,20 +107,20 @@ namespace Dulce.Heladeria.Services.Manager
             
 
             foreach (var sale in saleCash) {
-                cash.cant = cash.cant += 1;
-                cash.total = cash.total += sale.Total; 
+                cash.cant++;
+                cash.total += sale.Total; 
             }
 
             foreach (var sale in saleCard)
             {
-                card.cant = card.cant += 1;
-                card.total = card.total += sale.Total;
+                card.cant++;
+                card.total += sale.Total;
             }
 
             foreach (var sale in saleMp)
             {
-                mp.cant = mp.cant++;
-                mp.total = mp.total += sale.Total;
+                mp.cant++;
+                mp.total += sale.Total;
             }
 
             List<SalesWithMethod> salesWithMethods = new List<SalesWithMethod>();
